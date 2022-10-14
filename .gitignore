@@ -1,0 +1,7 @@
+*.Rproj
+Doc
+Data
+old_scripts
+.Rhistory
+.Rproj.user
+Outputs
