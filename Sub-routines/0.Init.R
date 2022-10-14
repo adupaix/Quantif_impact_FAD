@@ -21,9 +21,15 @@ srcUsedPackages <- c("plyr", "dplyr", "tidyr", "ggplot2", "ggspatial", 'sf',
 
 installAndLoad_packages(srcUsedPackages, loadPackages = TRUE)
 
+
 # ~ ----
 # ~ ----
 
+# Generate the output path
+OUTPUT_PATH <- file.path(OUTPUT_PATH, commit_name)
+if(!dir.exists(OUTPUT_PATH)){dir.create(OUTPUT_PATH, recursive = T)}
+
+# get world data for maps
 if (any(build_maps)){world <- map_data("world")}
 
 #so dates are printed in english

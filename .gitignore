@@ -5,3 +5,6 @@ old_scripts
 .Rhistory
 .Rproj.user
 Outputs
+cfg
+
+!cfg/ex_cfg.R
