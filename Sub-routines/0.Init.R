@@ -54,39 +54,26 @@ Output_names <- list()
 #' Names of 1. CATs
 #' ----------------
 try(dir.create(file.path(OUTPUT_PATH, "1.CATs")), silent = T)
-# names of the files containing all the CAT data for the different types of arrays
-Output_names$cats$square$csv <- file.path(OUTPUT_PATH, "1.CATs", "square_cats.csv")
-Output_names$cats$square_rd$csv <- file.path(OUTPUT_PATH, "1.CATs", "square_rd_cats.csv")
-Output_names$cats$random$csv <- file.path(OUTPUT_PATH, "1.CATs", "random_cats.csv")
+for (i in array_type){
+  # names of the files containing all the CAT data for the different types of arrays
+  Output_names$cats[[i]]$csv <- file.path(OUTPUT_PATH, "1.CATs", paste0(i,"_cats.csv"))
+  # Plots of the proportion of CATdiff and CATreturn
+  Output_names$cats[[i]]$plot_proportion <- file.path(OUTPUT_PATH, "1.CATs", paste0(i, "_plot_proportions.png"))
+  # Plots of the distributions of CATs
+  Output_names$cats[[i]]$plot_distribution <- file.path(OUTPUT_PATH, "1.CATs", paste0(i, "_plot_distribution.png"))
+}
 Output_names$cats$summary <- file.path(OUTPUT_PATH, "1.CATs", "summary.csv")
-# Plots of the proportion of CATdiff and CATreturn
-Output_names$cats$square$plot_proportion <- file.path(OUTPUT_PATH, "1.CATs", "square_plot_proportions.png")
-Output_names$cats$square_rd$plot_proportion <- file.path(OUTPUT_PATH, "1.CATs", "square_rd_plot_proportions.png")
-Output_names$cats$random$plot_proportion <- file.path(OUTPUT_PATH, "1.CATs", "random_plot_proportions.png")
-# Plots of the distributions of CATs
-Output_names$cats$square$plot_distribution <- file.path(OUTPUT_PATH, "1.CATs", "square_plot_distribution.png")
-Output_names$cats$square_rd$plot_distribution <- file.path(OUTPUT_PATH, "1.CATs", "square_rd_plot_distribution.png")
-Output_names$cats$random$plot_distribution <- file.path(OUTPUT_PATH, "1.CATs", "random_plot_distribution.png")
+
 
 #' Names of 1. Regression
 #' ----------------------
 #' files containing information on the regressions performed
 try(dir.create(file.path(OUTPUT_PATH, "1.Regression")), silent = T)
-Output_names$regression$square <- generate.output.paths.Regression(path = file.path(OUTPUT_PATH, "1.Regression", "square"))
-Output_names$regression$square_rd <- generate.output.paths.Regression(path = file.path(OUTPUT_PATH, "1.Regression", "square_rd"))
-Output_names$regression$random <- generate.output.paths.Regression(path = file.path(OUTPUT_PATH, "1.Regression", "random"))
-
+for (i in array_type){
+  Output_names$regression[[i]] <- generate.output.paths.Regression(path = file.path(OUTPUT_PATH, "1.Regression", i))
+}
 Output_names$regression$plot <- file.path(OUTPUT_PATH, "1.Regression", "general_plot.png")
 Output_names$regression$plot2 <- file.path(OUTPUT_PATH, "1.Regression", "random_and_square_plot.png")
-
-# files with the nearest neighbor plots 
-# try(dir.create(file.path(OUTPUT_PATH, "NN_plots")), silent = T)
-# Output_names$nn_plot_square1 <- file.path(OUTPUT_PATH, "NN_plots", "nn_square1.png")
-# Output_names$nn_plot_square2 <- file.path(OUTPUT_PATH, "NN_plots", "nn_square2.png")
-# Output_names$nn_plot_square_rd1 <- file.path(OUTPUT_PATH, "NN_plots", "nn_square_rd1.png")
-# Output_names$nn_plot_square_rd2 <- file.path(OUTPUT_PATH, "NN_plots", "nn_square_rd2.png")
-# Output_names$nn_plot_random1 <- file.path(OUTPUT_PATH, "NN_plots", "nn_random1.png")
-# Output_names$nn_plot_random2 <- file.path(OUTPUT_PATH, "NN_plots", "nn_random2.png")
 
 
 #' Names of 2. Buoy density
