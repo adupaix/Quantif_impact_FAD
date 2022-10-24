@@ -88,9 +88,8 @@ if (array_type.i %in% array_type | general_summary){
                                      model_return = models_return[[array_type.i]],
                                      model_proportion = models_proportion[[array_type.i]],
                                      cat_summary = cat_summary[[array_type.i]],
-                                     plots_name = c(Output_names$regression[[array_type.i]]$plot1,
-                                                    Output_names$regression[[array_type.i]]$plot2),
-                                     plot_rds_name = Output_names$regression[[array_type.i]]$plot2_rds,
+                                     plot_name = Output_names$regression[[array_type.i]]$plot,
+                                     plot_rds_name = Output_names$regression[[array_type.i]]$plot_rds,
                                      nls_name = Output_names$regression[[array_type.i]]$general$nls_rds)
     
     sink(type = "output", file = Output_names$regression[[array_type.i]]$general$model_summary)

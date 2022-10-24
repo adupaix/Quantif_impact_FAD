@@ -91,7 +91,7 @@ max_displayed_cat = 30
 #' --------------------------
 #' @considered_crt: one of c("IO","MozSey")
 #' @crt: measured CRT values (do not change)
-considered_crt = "IO45"
+considered_crt = "IO"
 crt = c(IO = 6.64,
         Moz = 7.56,
         Sey = 5.86,
@@ -114,4 +114,4 @@ percent_contour_kernel = 95
 
 #' Run the main script
 #' -------------------
-source(WD, "main.R")
+source(file.path(WD, "main.R"))

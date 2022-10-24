@@ -72,8 +72,6 @@ try(dir.create(file.path(OUTPUT_PATH, "1.Regression")), silent = T)
 for (i in array_type){
   Output_names$regression[[i]] <- generate.output.paths.Regression(path = file.path(OUTPUT_PATH, "1.Regression", i))
 }
-Output_names$regression$plot <- file.path(OUTPUT_PATH, "1.Regression", "general_plot.png")
-Output_names$regression$plot2 <- file.path(OUTPUT_PATH, "1.Regression", "random_and_square_plot.png")
 
 
 #' Names of 2. Buoy density

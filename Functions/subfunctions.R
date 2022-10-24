@@ -153,9 +153,8 @@ read.cats <- function(sim_output_path,
 generate.output.paths.Regression <- function(path){
   if(!dir.exists(path)){dir.create(path)}
   l <- list()
-  l$plot1 <- file.path(path, "general_fit_1overCAT.png")
-  l$plot2 <- file.path(path, "general_fit.png")
-  l$plot2_rds <- file.path(path, "general_fit.rds")
+  l$plot <- file.path(path, "general_fit.png")
+  l$plot_rds <- file.path(path, "general_fit.rds")
   # l$rds <- file.path(path, "lm.rds")
   # l$summary <- file.path(path, "lm.txt")
   
@@ -250,7 +249,7 @@ plot.CAT.distribution <- function(CATs){
 # and the plot of the more complex fit (obtained with the formula CAT = (R*CATdiff + CATreturn)/(1+R))
 general.fit <- function(model_diff, model_return, model_proportion,
                         cat_summary,
-                        plots_name,
+                        plot_name,
                         plot_rds_name,
                         nls_name){
   # x <- seq(min(cat_summary$rho),max(cat_summary$rho),10^-5)
@@ -261,20 +260,9 @@ general.fit <- function(model_diff, model_return, model_proportion,
   betha = coef(simple_model)[2]
   
   saveRDS(simple_model, nls_name)
+
   
-  
-  # p1 <- ggplot()+
-  #   geom_point(data = cat_summary, aes(x = rho, y = 1/mean_CAT))+
-  #   geom_function(fun = function(x) 1/cat.formula(x),
-  #                 args = list(model_diff=model_diff,
-  #                             model_return=model_return,
-  #                             model_proportion=model_proportion),
-  #                 col = "red")+
-  #   geom_function(fun = function(x) 1/(alpha / x ** betha), col = "blue")
-  # 
-  # ggsave(plots_name[1], p1, width = 8, height = 8)
-  
-  p2 <- ggplot()+
+  p <- ggplot()+
     geom_point(data = cat_summary, aes(x = rho, y = mean_CAT))+
     geom_function(fun = cat.formula,
                   args = list(model_diff=model_diff,
@@ -286,8 +274,8 @@ general.fit <- function(model_diff, model_return, model_proportion,
     ylab("CAT (days)")+
     xlab(expression(rho ~ (km^-1)))
   
-  ggsave(plots_name[2], p2, width = 8, height = 8)
-  saveRDS(p2, plot_rds_name)
+  ggsave(plot_name, p, width = 8, height = 8)
+  saveRDS(p, plot_rds_name)
   
   return(simple_model)
 }
