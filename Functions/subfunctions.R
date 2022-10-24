@@ -8,27 +8,82 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-#' function to format the Western Indian Ocean maps
-#'  @p: ggplot2 object containing an unformated map
-mise.en.forme.ggplot <- function(p){
-  p <- p + xlab("Longitude") +
-    ylab("Latitude") +
-    # echelle distance
-    ggspatial::annotation_scale(location = "bl", width_hint = 0.5) +
-    # fleche nord
-    ggspatial::annotation_north_arrow(location = "tr", which_north = "true", 
-                                      pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
-                                      style = north_arrow_fancy_orienteering) +
-    # legende a l interieur
-    theme(panel.border = element_rect(colour = "black", fill=NA),
-          # legend.position = c(1,0),
-          # legend.justification = c(1,0),
-          legend.background = element_rect(fill="white", linetype = "solid", colour = "black"),
-          legend.title.align = .5,
-          panel.background = element_rect(fill = "grey40"),
-          panel.grid = element_blank(),
-          plot.title = element_text(hjust = 0.5))
+#' Functions of 0.Init
+#' ********************
+
+#' Function to generate the path of the outputs of the sub-routine 1.Regression
+#' @path: sub directory of the output directory, containing the outputs of 1.Regression
+generate.output.paths.Regression <- function(path){
+  if(!dir.exists(path)){dir.create(path)}
+  l <- list()
+  l$plot <- file.path(path, "general_fit.png")
+  l$plot_rds <- file.path(path, "general_fit.rds")
+  # l$rds <- file.path(path, "lm.rds")
+  # l$summary <- file.path(path, "lm.txt")
   
+  l$proportion$plot <- file.path(path, "model_proportion.png")
+  l$proportion$plot_rds <- file.path(path, "plot_proportion.rds")
+  l$proportion$nls_rds <- file.path(path, "model_proportion.rds")
+  l$proportion$model_summary <- file.path(path, "model_proportion.txt")
+  
+  l$diff$plot <- file.path(path, "model_diff.png")
+  l$diff$plot_rds <- file.path(path, "plot_diff.rds")
+  l$diff$nls_rds <- file.path(path, "model_diff.rds")
+  # l$diff$lm_rds <- file.path(path, "model_lm_diff.rds")
+  l$diff$model_summary <- file.path(path, "model_diff.txt")
+  
+  l$return$plot <- file.path(path, "model_return.png")
+  l$return$nls_rds <- file.path(path, "model_return.rds")
+  l$return$plot_rds <- file.path(path, "plot_return.rds")
+  # l$return$lm_rds <- file.path(path, "model_lm_return.rds")
+  l$return$model_summary <- file.path(path, "model_return.txt")
+  
+  l$general$nls_rds <- file.path(path, "model_general_simplefit.rds")
+  l$general$model_summary <- file.path(path, "model_general_simplefit.txt")
+  
+  return(l)
+}
+
+
+
+#' Functions of 1.Regression
+#' *************************
+
+#' Function to read all the CAT values from the FAT albaCoRaW outputs,
+#' compile them in a data frame and save it as csv
+#' @sim_output_path: path to the directory containing FAT albaCoRaW outputs
+#' @array_type: one of "random", "square", "sqaure_rd" (name of the subdirectory containing the outputs)
+read.cats <- function(sim_output_path,
+                      array_type){
+  
+  out_dirs <- list.dirs(file.path(sim_output_path, array_type), recursive = F)
+  dists <- as.numeric(unlist(lapply(strsplit(out_dirs, "distFAD"), function(x) strsplit(x[2], "_")[[1]][1])))
+  seeds <- as.numeric(unlist(lapply(strsplit(out_dirs, "seed"), function(x) strsplit(x[2], "_")[[1]][1])))
+  
+  if (file.exists(Output_names$cats[[which(names(Output_names$cats) == array_type)]]$csv)){
+    cat("        Reading existing csv file\n")
+    CATs <- read.csv(Output_names$cats[[which(names(Output_names$cats) == array_type)]]$csv)
+  } else {
+    cat("        Reading CATs from simulation outputs\n")
+    CATs <- list()
+    
+    for (i in 1:length(dists)){
+      CATs[[i]] <- read.csv(file.path(out_dirs[i], "CATs", "CATs_array.csv"),
+                            sep = " ", header = F)
+      names(CATs[[i]]) <- c("id_tuna","nstep_b","nstep_e", "FAD_b", "FAD_e", "CAT", "distFAD", "nn_nb", "is_a_CAT")
+      
+      CATs[[i]] %>% dplyr::select(id_tuna, CAT, distFAD, nn_nb) %>%
+        mutate(seed = seeds[i],
+               distance_min = dists[i]) -> CATs[[i]]
+    }
+    
+    CATs <- bind_rows(CATs) %>% mutate(rho = 1/(distance_min)^2,
+                                       one_over_CAT = 1/CAT)
+    
+    write.csv(CATs, Output_names$cats[[which(names(Output_names$cats) == array_type)]]$csv)
+  }
+  
+  return(CATs)
 }
 
 #' Function to generate a summary of the Continuous Absence Times
@@ -54,6 +109,7 @@ generate.summary <- function(CATs){
   
   return(cat_summary)
 }
+
 
 #' Function to fit a relationship to CAT data (using nls function)
 #' and plot the fit
@@ -148,75 +204,6 @@ nls.and.plot.proportion <- function(cat_return_summary,
   return(model)
 }
 
-#' Function to read all the CAT values from the FAT albaCoRaW outputs,
-#' compile them in a data frame and save it as csv
-#' @sim_output_path: path to the directory containing FAT albaCoRaW outputs
-#' @array_type: one of "random", "square", "sqaure_rd" (name of the subdirectory containing the outputs)
-read.cats <- function(sim_output_path,
-                      array_type){
-  
-  out_dirs <- list.dirs(file.path(sim_output_path, array_type), recursive = F)
-  dists <- as.numeric(unlist(lapply(strsplit(out_dirs, "distFAD"), function(x) strsplit(x[2], "_")[[1]][1])))
-  seeds <- as.numeric(unlist(lapply(strsplit(out_dirs, "seed"), function(x) strsplit(x[2], "_")[[1]][1])))
-  
-  if (file.exists(Output_names$cats[[which(names(Output_names$cats) == array_type)]]$csv)){
-    cat("        Reading existing csv file\n")
-    CATs <- read.csv(Output_names$cats[[which(names(Output_names$cats) == array_type)]]$csv)
-  } else {
-    cat("        Reading CATs from simulation outputs\n")
-    CATs <- list()
-    
-    for (i in 1:length(dists)){
-      CATs[[i]] <- read.csv(file.path(out_dirs[i], "CATs", "CATs_array.csv"),
-                            sep = " ", header = F)
-      names(CATs[[i]]) <- c("id_tuna","nstep_b","nstep_e", "FAD_b", "FAD_e", "CAT", "distFAD", "nn_nb", "is_a_CAT")
-      
-      CATs[[i]] %>% dplyr::select(id_tuna, CAT, distFAD, nn_nb) %>%
-        mutate(seed = seeds[i],
-               distance_min = dists[i]) -> CATs[[i]]
-    }
-    
-    CATs <- bind_rows(CATs) %>% mutate(rho = 1/(distance_min)^2,
-                                       one_over_CAT = 1/CAT)
-    
-    write.csv(CATs, Output_names$cats[[which(names(Output_names$cats) == array_type)]]$csv)
-  }
-  
-  return(CATs)
-}
-
-#' Function to generate the path of the outputs of the sub-routine 1.Regression
-#' @path: sub directory of the output directory, containing the outputs of 1.Regression
-generate.output.paths.Regression <- function(path){
-  if(!dir.exists(path)){dir.create(path)}
-  l <- list()
-  l$plot <- file.path(path, "general_fit.png")
-  l$plot_rds <- file.path(path, "general_fit.rds")
-  # l$rds <- file.path(path, "lm.rds")
-  # l$summary <- file.path(path, "lm.txt")
-  
-  l$proportion$plot <- file.path(path, "model_proportion.png")
-  l$proportion$plot_rds <- file.path(path, "plot_proportion.rds")
-  l$proportion$nls_rds <- file.path(path, "model_proportion.rds")
-  l$proportion$model_summary <- file.path(path, "model_proportion.txt")
-  
-  l$diff$plot <- file.path(path, "model_diff.png")
-  l$diff$plot_rds <- file.path(path, "plot_diff.rds")
-  l$diff$nls_rds <- file.path(path, "model_diff.rds")
-  # l$diff$lm_rds <- file.path(path, "model_lm_diff.rds")
-  l$diff$model_summary <- file.path(path, "model_diff.txt")
-  
-  l$return$plot <- file.path(path, "model_return.png")
-  l$return$nls_rds <- file.path(path, "model_return.rds")
-  l$return$plot_rds <- file.path(path, "plot_return.rds")
-  # l$return$lm_rds <- file.path(path, "model_lm_return.rds")
-  l$return$model_summary <- file.path(path, "model_return.txt")
-  
-  l$general$nls_rds <- file.path(path, "model_general_simplefit.rds")
-  l$general$model_summary <- file.path(path, "model_general_simplefit.txt")
-  
-  return(l)
-}
 
 #' Generate the distribution of CATs as a function of the mean interFAD distance
 #' @CATs: data frame with the CATs values (output of read.cats())
@@ -234,7 +221,6 @@ plot.CAT.distribution <- function(CATs){
   
 }
 
-
 # save both the simplefit model (CAT = a/rho^b)
 # and the plot of the more complex fit (obtained with the formula CAT = (R*CATdiff + CATreturn)/(1+R))
 general.fit <- function(model_diff, model_return, model_proportion,
@@ -250,7 +236,7 @@ general.fit <- function(model_diff, model_return, model_proportion,
   betha = coef(simple_model)[2]
   
   saveRDS(simple_model, nls_name)
-
+  
   
   p <- ggplot()+
     geom_point(data = cat_summary, aes(x = rho, y = mean_CAT))+
@@ -269,6 +255,10 @@ general.fit <- function(model_diff, model_return, model_proportion,
   
   return(simple_model)
 }
+
+
+#' Functions of 3.Predict_CAT
+#' *************************
 
 #' Function which, from a FAD density value and the models fitted to the different CAT types, return the CAT value
 #' @rho: density values
@@ -298,6 +288,10 @@ cat.formula <- function(rho,
   
 }
 
+
+#' Functions of 4.Predict_Pa
+#' *************************
+
 #' Function to change a continuous variable to a discrete one
 #' Returns the input data frame with an additional column
 #' @data: dataframe containing the variable of interest
@@ -323,4 +317,31 @@ col.to.discrete <- function(data, steps, col_name, new_col_name){
   names(data)[which(names(data) == "discrete")] <- new_col_name
   
   return(data)
+}
+
+
+#' Functions used in several sub-routines
+#' ***********************************
+
+#' function to format the Western Indian Ocean maps
+#'  @p: ggplot2 object containing an unformated map
+mise.en.forme.ggplot <- function(p){
+  p <- p + xlab("Longitude") +
+    ylab("Latitude") +
+    # echelle distance
+    ggspatial::annotation_scale(location = "bl", width_hint = 0.5) +
+    # fleche nord
+    ggspatial::annotation_north_arrow(location = "tr", which_north = "true", 
+                                      pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
+                                      style = north_arrow_fancy_orienteering) +
+    # legende a l interieur
+    theme(panel.border = element_rect(colour = "black", fill=NA),
+          # legend.position = c(1,0),
+          # legend.justification = c(1,0),
+          legend.background = element_rect(fill="white", linetype = "solid", colour = "black"),
+          legend.title.align = .5,
+          panel.background = element_rect(fill = "grey40"),
+          panel.grid = element_blank(),
+          plot.title = element_text(hjust = 0.5))
+  
 }
