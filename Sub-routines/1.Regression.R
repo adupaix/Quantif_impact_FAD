@@ -9,8 +9,8 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-if (array_type.i %in% array_type | general_summary){
-  if (file.exists(Output_names$regression[[array_type.i]]$general$nls_rds) & !general_summary){
+if (array_type.i %in% ARRAY_TYPE | GENERAL_SUMMARY){
+  if (file.exists(Output_names$regression[[array_type.i]]$general$nls_rds) & !GENERAL_SUMMARY){
     
     models[[array_type.i]] <- readRDS(Output_names$regression[[array_type.i]]$general$nls_rds)
     models_diff[[array_type.i]] <- readRDS(Output_names$regression[[array_type.i]]$diff$nls_rds)
@@ -19,7 +19,7 @@ if (array_type.i %in% array_type | general_summary){
     
   } else {
     
-    CATs <- read.cats(sim_output_path = sim_output_path,
+    CATs <- read.cats(sim_output_path = SIM_OUTPUT_PATH,
                       array_type = array_type.i)
     cat_summary[[array_type.i]] <- generate.summary(CATs)
     

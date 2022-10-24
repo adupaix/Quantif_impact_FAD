@@ -22,19 +22,19 @@ sets3CE <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2022-WPTT24(DP)-DATA05-CE
 
 
 #' Apply the same formatting to the 2 datasets
-#' 3FA: keep the year and fleets of interest, keep only the lines with sets and rename columns
-sets3FA %>% dplyr::filter(YEAR == year,
+#' 3FA: keep the YEAR and fleets of interest, keep only the lines with sets and rename columns
+sets3FA %>% dplyr::filter(YEAR == YEAR,
                           FLEET_CODE %in% c("EUR", "JPN", "MUS", "SYC"),
                           NUM_SETS_ON_FOB != 0) %>%
   dplyr::select(YEAR, MONTH, FISHING_GROUND_CODE, FLEET_CODE, NUM_SETS_ON_FOB) %>%
   dplyr::mutate(data_source = "FA") -> sets3FA
 names(sets3FA) <- toupper(names(sets3FA))
 
-#' 3CE: select the year and fleets of interest, keep only the log schools catch and the effort expressed as SETS
+#' 3CE: select the YEAR and fleets of interest, keep only the log schools catch and the effort expressed as SETS
 #'      rename the columns
 levels(sets3CE$Fleet) <- gsub(" ", "", levels(sets3CE$Fleet))
 columns <- grep("LS", names(sets3CE))
-sets3CE %>% dplyr::filter(Year == year,
+sets3CE %>% dplyr::filter(Year == YEAR,
                           Fleet == "KOR",
                           EffortUnits == "SETS") %>%
   dplyr::select(Fleet:EffortUnits, all_of(columns)) -> sets3CE
@@ -66,7 +66,7 @@ sets <- data.frame(lapply(sets,
                           function(x) if(any(grepl("[0-9]", x))){return(as.numeric(x))} else {return(x)}),
                    stringsAsFactors = F)
 
-sets %>% dplyr::mutate(date = as.Date(paste0(year, "-", month, "-15")),
+sets %>% dplyr::mutate(date = as.Date(paste0(YEAR, "-", month, "-15")),
                        id_unique = paste0(fishing_ground_code,date)) %>%
   dplyr::filter(center_lat > -40, center_lat < 30,
                 center_lon > 30, center_lon < 110) -> sets
@@ -91,7 +91,7 @@ sets %>%
 data_predict$is_in_contour <- F
 
 
-if (build_maps[4]){
+if (BUILD_MAPS[4]){
   # build monthly maps and determine which cells are where the FOB sets density is highest
   plist <- list() # will contain the maps of the number of FOB sets
   plist_kernel <- list() # will contain the maps of the number of FOB sets with the surface in red
@@ -103,7 +103,7 @@ if (build_maps[4]){
       dplyr::filter(month == m) -> sets.m
     # data_predict (with all the CAT and Pa predictions)
     data_predict %>%
-      filter(YEAR == year, MONTH == m) -> data.m
+      filter(YEAR == YEAR, MONTH == m) -> data.m
     pts.m <- st_as_sf(data.m, coords = c("degraded_lon","degraded_lat")) # create an st_point data frame object
     cells_in_contour <- list() #will contain the line number in pts.m which correspond to cell that are inside the contour
     
@@ -137,7 +137,7 @@ if (build_maps[4]){
     # build the kernel
     kd <- ks::kde(pts[,1:2], compute.cont=TRUE)
     # build the surface containing the chosen percentage (chosen_cont) of FOB sets
-    chosen_cont <- 100-percent_contour_kernel
+    chosen_cont <- 100-PERCENT_CONTOUR_KERNEL
     contour_ <- with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
                                       z=estimate,
                                       levels=cont[paste0(chosen_cont,"%")]))
@@ -204,7 +204,7 @@ if (build_maps[4]){
   p2 <- ggplot(data_predict)+
     geom_histogram(aes(x=PREDICTED_MEAN_CAT_RANDOM, fill = is_in_contour),
                    binwidth = 1)+
-    scale_x_continuous(limits = c(0,max_displayed_cat))+
+    scale_x_continuous(limits = c(0,MAX_DISPLAYED_CAT))+
     scale_fill_brewer("Is in the most\nfished cells",palette = "Set1")+
     facet_wrap(~is_in_contour)+
     ylab("Number of cells")+
@@ -219,7 +219,7 @@ if (build_maps[4]){
 if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["mean"]][["random"]][["CAT"]]),
                     gsub("png","rds", Output_names$prediction$percent[["mean"]][["random"]]),
                     Output_names$fishing_pressure$contour_list)) &
-    build_maps[5]){
+    BUILD_MAPS[5]){
   
   maps_cat <- readRDS(gsub("png","rds", Output_names$prediction$cats[["mean"]][["random"]][["CAT"]]))
   maps_Pa <- readRDS(gsub("png","rds", Output_names$prediction$percent[["mean"]][["random"]]))

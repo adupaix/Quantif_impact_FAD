@@ -9,7 +9,7 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-for (i in 1:length(array_type)){
+for (i in 1:length(ARRAY_TYPE)){
   cat_summary[[i]] %>% mutate(array_type = names(cat_summary)[i]) -> cat_summary[[i]]
   cat_diff_summary[[i]] %>% mutate(array_type = names(cat_diff_summary)[i]) -> cat_diff_summary[[i]]
   cat_return_summary[[i]] %>% mutate(array_type = names(cat_return_summary)[i]) -> cat_return_summary[[i]]

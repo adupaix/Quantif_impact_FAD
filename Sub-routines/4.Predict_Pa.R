@@ -9,18 +9,18 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-for (j in 1:length(fct)){
-  for (k in 1:length(array_type)){
+for (j in 1:length(FCT)){
+  for (k in 1:length(ARRAY_TYPE)){
     catvarname <- paste0("PREDICTED_",
-                         toupper(fct[j]),
+                         toupper(FCT[j]),
                          "_CAT_",
-                         toupper(array_type[k]))
+                         toupper(ARRAY_TYPE[k]))
     percentvarname <- paste0("PREDICTED_",
-                             toupper(fct[j]),
+                             toupper(FCT[j]),
                              "_PERCENT_",
-                             toupper(array_type[k]))
+                             toupper(ARRAY_TYPE[k]))
     
-    data %>% dplyr::mutate(V1 = 100 * crt[area] / (crt[area] + !!rlang::sym(catvarname))) -> data
+    data %>% dplyr::mutate(V1 = 100 * CRT[area] / (CRT[area] + !!rlang::sym(catvarname))) -> data
     names(data)[which(names(data)=="V1")] <- percentvarname
     
     data <- col.to.discrete(data = data,
@@ -34,8 +34,8 @@ for (j in 1:length(fct)){
 #' @cleaning: select only columns of interest
 vars <- c("id_unique", "YEAR", "MONTH", "DATE", "degraded_lon", "degraded_lat",
           "mean_degraded_density", "max_degraded_density", "min_degraded_density")
-for (i in 1:length(array_type)){
-  vars <- c(vars, grep(toupper(array_type[i]), names(data), value = T))
+for (i in 1:length(ARRAY_TYPE)){
+  vars <- c(vars, grep(toupper(ARRAY_TYPE[i]), names(data), value = T))
 }
 
 data %>% dplyr::select(all_of(vars)) %>%

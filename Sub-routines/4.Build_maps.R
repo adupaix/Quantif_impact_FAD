@@ -11,9 +11,9 @@
 
 
 varname <- paste0("PREDICTED_",
-                  toupper(fct[j]),
+                  toupper(FCT[j]),
                   "_PERCENT_",
-                  toupper(array_type[k]), "_d")
+                  toupper(ARRAY_TYPE[k]), "_d")
 data_predict[,varname] <- factor(data_predict[,varname]) #drops the unused factors
 my_colors <- scales::viridis_pal()(length(levels(data_predict[,varname]))+1) # get the colors (+1 to drop the yellow at the end of the palette)
 
@@ -26,7 +26,7 @@ percent_maps <- list()
 for (l in 1:length(unique(sub_data$DATE))){
   
   sub_data %>% dplyr::filter(!duplicated(id_unique) & DATE == months_in_data[l]) %>%
-    # dplyr::filter(toplot < max_displayed_cat) %>%
+    # dplyr::filter(toplot < MAX_DISPLAYED_CAT) %>%
     # dplyr::filter((!!rlang::sym(vars[j])) < maxs[j]) %>%
     ggplot()+
     coord_sf(xlim = c(30, 110), ylim = c(-40, 30), expand = FALSE, crs = st_crs(4326))+
@@ -52,8 +52,8 @@ percentmaps <- ggpubr::ggarrange(plotlist = percent_maps[1:(length(percent_maps)
                                  align = "hv", labels = "AUTO",
                                  common.legend = T,
                                  legend = "right")
-ggsave(Output_names$prediction$percent[[fct[j]]][[array_type[k]]], percentmaps,
+ggsave(Output_names$prediction$percent[[FCT[j]]][[ARRAY_TYPE[k]]], percentmaps,
        width = 120*4 + 20,
        height = 105*3, units = "mm")
 saveRDS(percent_maps,
-        file = gsub("png","rds",Output_names$prediction$percent[[fct[j]]][[array_type[k]]]))
+        file = gsub("png","rds",Output_names$prediction$percent[[FCT[j]]][[ARRAY_TYPE[k]]]))

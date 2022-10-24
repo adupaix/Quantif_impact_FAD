@@ -38,7 +38,7 @@ for (array_type.i in c("square","square_rd","random")){
 }
 
 # 1.2. Global regression plot
-if (general_summary){
+if (GENERAL_SUMMARY){
   cat("\n  Generate global summary")
   source(file = file.path(ROUT_PATH, "1.Global_summary.R"))
 }
@@ -64,13 +64,13 @@ cat("\n\n3. Predict expected CAT values")
 source(file = file.path(ROUT_PATH, "3.Predict_CAT.R"))
 
 ## 3.3 Build prediction maps ----
-if (build_maps[2]){
+if (BUILD_MAPS[2]){
     #' for each function chosen as argument (corresponding to the available data:
     #' one or several of min, mean, max)
-    for (j in 1:length(fct)){
+    for (j in 1:length(FCT)){
       #' for each array type
-      for (k in 1:length(array_type)){
-        for (l in 1:length(cat_type)){
+      for (k in 1:length(ARRAY_TYPE)){
+        for (l in 1:length(CAT_TYPE)){
           source(file = file.path(ROUT_PATH, "3.Build_maps.R"))
         }
       }
@@ -80,9 +80,9 @@ if (build_maps[2]){
 # 4. Prediction of Pa (% of time spent associated) ----
 ## 4.1 Determine the area containing each cell ----
 cat("\n\n4. Predict expected Pa values")
-if (considered_crt != "MozSey"){
-  data %>% dplyr::mutate(area = considered_crt) -> data
-} else if (considered_crt == "MozSey"){
+if (CONSIDERED_CRT != "MozSey"){
+  data %>% dplyr::mutate(area = CONSIDERED_CRT) -> data
+} else if (CONSIDERED_CRT == "MozSey"){
   data %>%
     dplyr::mutate(area = dplyr::if_else(degraded_lon < 50 & degraded_lat < -10, "Moz", "Sey")) -> data
 }
@@ -91,10 +91,10 @@ if (considered_crt != "MozSey"){
 source(file = file.path(ROUT_PATH, "4.Predict_Pa.R"))
 
 ## 4.3 Build maps of Pa ----
-if (build_maps[3]){
+if (BUILD_MAPS[3]){
 
-    for (j in 1:length(fct)){
-      for (k in 1:length(array_type)){
+    for (j in 1:length(FCT)){
+      for (k in 1:length(ARRAY_TYPE)){
         
         source(file = file.path(ROUT_PATH, "4.Build_maps.R"))
       }

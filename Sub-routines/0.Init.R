@@ -26,17 +26,17 @@ installAndLoad_packages(srcUsedPackages, loadPackages = TRUE)
 # ~ ----
 
 # Generate the output path
-OUTPUT_PATH <- file.path(OUTPUT_PATH, commit_name)
+OUTPUT_PATH <- file.path(OUTPUT_PATH, COMMIT_NAME)
 if(!dir.exists(OUTPUT_PATH)){dir.create(OUTPUT_PATH, recursive = T)}
 
 # get world data for maps
-if (any(build_maps)){world <- map_data("world")}
+if (any(BUILD_MAPS)){world <- map_data("world")}
 
 #so dates are printed in english
 Sys.setlocale("LC_TIME", "en_US.UTF-8") # For Unix
 # Sys.setlocale("LC_TIME", "English") # For Windows
 
-vars_map_density <- paste0("DENSITY_BUOYS_", toupper(vars_map_density))
+VARS_MAP_DENSITY <- paste0("DENSITY_BUOYS_", toupper(VARS_MAP_DENSITY))
 
 # if (compare_with_ABBI){resolution = 10}
 
@@ -54,7 +54,7 @@ Output_names <- list()
 #' Names of 1. CATs
 #' ----------------
 try(dir.create(file.path(OUTPUT_PATH, "1.CATs")), silent = T)
-for (i in array_type){
+for (i in ARRAY_TYPE){
   # names of the files containing all the CAT data for the different types of arrays
   Output_names$cats[[i]]$csv <- file.path(OUTPUT_PATH, "1.CATs", paste0(i,"_cats.csv"))
   # Plots of the proportion of CATdiff and CATreturn
@@ -69,7 +69,7 @@ Output_names$cats$summary <- file.path(OUTPUT_PATH, "1.CATs", "summary.csv")
 #' ----------------------
 #' files containing information on the regressions performed
 try(dir.create(file.path(OUTPUT_PATH, "1.Regression")), silent = T)
-for (i in array_type){
+for (i in ARRAY_TYPE){
   Output_names$regression[[i]] <- generate.output.paths.Regression(path = file.path(OUTPUT_PATH, "1.Regression", i))
 }
 
@@ -79,8 +79,8 @@ for (i in array_type){
 #' files obtained from the IOTC data on buoy density
 try(dir.create(file.path(OUTPUT_PATH, "2.Buoy_density")), silent = T)
 Output_names$buoy_density$timeseries <- file.path(OUTPUT_PATH, "2.Buoy_density", "timeseries.png")
-for (i in 1:length(fct)){
-  Output_names$buoy_density$maps[[as.character(year)]][[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",fct[i],"_", year,".png"))
+for (i in 1:length(FCT)){
+  Output_names$buoy_density$maps[[as.character(YEAR)]][[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",FCT[i],"_", YEAR,".png"))
 }
 
 
@@ -92,29 +92,29 @@ try(dir.create(file.path(OUTPUT_PATH, "3_4.Prediction", "3.CATs"), recursive = T
 try(dir.create(file.path(OUTPUT_PATH, "3_4.Prediction", "4.Percent")), silent = T)
 Output_names$prediction$cats <- list()
 Output_names$prediction$percent <- list()
-for (j in fct){
+for (j in FCT){
   Output_names$prediction$cats[[j]] <- list()
   Output_names$prediction$percent[[j]] <- list()
-  for (k in array_type){
+  for (k in ARRAY_TYPE){
     Output_names$prediction$cats[[j]][[k]] <- list()
-    for (l in cat_type){
+    for (l in CAT_TYPE){
       Output_names$prediction$cats[[j]][[k]][[l]] <- file.path(OUTPUT_PATH, "3_4.Prediction", "3.CATs",
                                                                paste("maps", l,
-                                                                     color_scale_transformation,
-                                                                     "max",max_displayed_cat,
-                                                                     "res",resolution,
-                                                                     year,j,k,".png",
+                                                                     COLOR_SCALE_TRANSFORMATION,
+                                                                     "max",MAX_DISPLAYED_CAT,
+                                                                     "res",RESOLUTION,
+                                                                     YEAR,j,k,".png",
                                                                      sep = "_"))
       
       Output_names$prediction$percent[[j]][[k]] <- file.path(OUTPUT_PATH, "3_4.Prediction", "4.Percent",
-                                                             paste0("maps_res",resolution,
-                                                                    "_",year,"_",j,"_",k, ".png"))
+                                                             paste0("maps_res",RESOLUTION,
+                                                                    "_",YEAR,"_",j,"_",k, ".png"))
     }
   }
 }
 
 # Values of predicted CATs and percentages of time spent associated, stored in a .csv
-Output_names$prediction$csv <- file.path(OUTPUT_PATH, '3_4.Prediction', paste0("predictions_res",resolution,".csv"))
+Output_names$prediction$csv <- file.path(OUTPUT_PATH, '3_4.Prediction', paste0("predictions_res",RESOLUTION,".csv"))
 
 #' Names of 5.Fishing_pressure
 #' --------------------------
@@ -122,22 +122,22 @@ try(dir.create(file.path(OUTPUT_PATH, "5.Fishing_pressure")), silent = T)
 Output_names$fishing_pressure$maps <- file.path(OUTPUT_PATH, "5.Fishing_pressure", "number_of_FOB_sets_maps.png")
 Output_names$fishing_pressure$maps_kernel <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
                                                        paste0("number_of_FOB_sets_maps_with_",
-                                                              percent_contour_kernel,
+                                                              PERCENT_CONTOUR_KERNEL,
                                                               "percent_area.png"))
 Output_names$fishing_pressure$hist_Pa <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
                                                    "Histogram_percentage_of_associated_time.png")
 Output_names$fishing_pressure$hist_CAT <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
                                                        paste0("Histogram_CAT_with_limit_at_",
-                                                              max_displayed_cat,
+                                                              MAX_DISPLAYED_CAT,
                                                               ".png"))
 Output_names$fishing_pressure$contour_list <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                        paste0("List_polygons_",percent_contour_kernel,
+                                                        paste0("List_polygons_",PERCENT_CONTOUR_KERNEL,
                                                                "percent_FOB_sets.rds"))
 Output_names$fishing_pressure$maps_Pa_kernel <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                          paste0("Maps_Pa_",percent_contour_kernel,
+                                                          paste0("Maps_Pa_",PERCENT_CONTOUR_KERNEL,
                                                                  "percent_FOB_sets.png"))
 Output_names$fishing_pressure$maps_CAT_kernel <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                          paste0("Maps_CAT_",percent_contour_kernel,
+                                                          paste0("Maps_CAT_",PERCENT_CONTOUR_KERNEL,
                                                                  "percent_FOB_sets.png"))
 Output_names$fishing_pressure$csv <- file.path(OUTPUT_PATH, '5.Fishing_pressure',
-                                         paste0("predictions_res",resolution,"_percentFOBsets",percent_contour_kernel,".csv"))
+                                         paste0("predictions_res",RESOLUTION,"_percentFOBsets",PERCENT_CONTOUR_KERNEL,".csv"))

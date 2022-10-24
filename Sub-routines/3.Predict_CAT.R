@@ -9,8 +9,8 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-data %>% dplyr::mutate(degraded_lat = floor(CENTER_LAT/resolution)*resolution + resolution/2,
-                       degraded_lon = floor(CENTER_LON/resolution)*resolution + resolution/2,
+data %>% dplyr::mutate(degraded_lat = floor(CENTER_LAT/RESOLUTION)*RESOLUTION + RESOLUTION/2,
+                       degraded_lon = floor(CENTER_LON/RESOLUTION)*RESOLUTION + RESOLUTION/2,
                        id_unique = paste(YEAR, MONTH, degraded_lat, degraded_lon, sep = "_")) -> data
 
 data %>% plyr::ddply(.variables = "id_unique",
@@ -25,23 +25,23 @@ data %>% plyr::ddply(.variables = "id_unique",
   dplyr::right_join(data, by = "id_unique") -> data
 
 # predict the mean CATs
-# fct <- c("min","mean","max")
-for (j in 1:length(fct)){
-  for (array_type.k in array_type){
+# FCT <- c("min","mean","max")
+for (j in 1:length(FCT)){
+  for (array_type.k in ARRAY_TYPE){
     varname <- paste("PREDICTED",
-                      toupper(fct[j]),
-                      cat_type,
+                      toupper(FCT[j]),
+                      CAT_TYPE,
                       toupper(array_type.k),
                       sep = "_")
     
-    fct_name <- paste0(fct[j],"_degraded_density")
+    fct_name <- paste0(FCT[j],"_degraded_density")
     
-    for (k in 1:length(cat_type)){
+    for (k in 1:length(CAT_TYPE)){
       data %>% dplyr::mutate(V1 = cat.formula(rho = data[[fct_name]],
                                           model_diff = models_diff[[array_type.k]],
                                           model_return = models_return[[array_type.k]],
                                           model_proportion = models_proportion[[array_type.k]],
-                                          out_var=cat_type[k])) -> data
+                                          out_var=CAT_TYPE[k])) -> data
       names(data)[which(names(data)=="V1")] <- varname[k]
     }
     
