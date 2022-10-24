@@ -17,7 +17,7 @@ varname <- paste0("PREDICTED_",
 data_predict[,varname] <- factor(data_predict[,varname]) #drops the unused factors
 my_colors <- scales::viridis_pal()(length(levels(data_predict[,varname]))+1) # get the colors (+1 to drop the yellow at the end of the palette)
 
-data_predict %>% dplyr::filter(YEAR == sort(unique(data$YEAR))[i]) %>%
+data_predict %>%
   dplyr::rename("toplot" = dplyr::all_of(varname)) -> sub_data
 
 months_in_data <- sort(unique(sub_data$DATE))
@@ -52,8 +52,8 @@ percentmaps <- ggpubr::ggarrange(plotlist = percent_maps[1:(length(percent_maps)
                                  align = "hv", labels = "AUTO",
                                  common.legend = T,
                                  legend = "right")
-ggsave(Output_names$prediction$percent[[as.character(sort(unique(data$YEAR))[i])]][[fct[j]]][[array_type[k]]], percentmaps,
+ggsave(Output_names$prediction$percent[[fct[j]]][[array_type[k]]], percentmaps,
        width = 120*4 + 20,
        height = 105*3, units = "mm")
 saveRDS(percent_maps,
-        file = gsub("png","rds",Output_names$prediction$percent[[as.character(sort(unique(data$YEAR))[i])]][[fct[j]]][[array_type[k]]]))
+        file = gsub("png","rds",Output_names$prediction$percent[[fct[j]]][[array_type[k]]]))

@@ -27,7 +27,8 @@ data %>% dplyr::mutate(DENSITY_BUOYS_MIN = N_BUOYS_MIN / WATER_AREA_KM2,
                        DENSITY_BUOYS_MEAN = N_BUOYS_MEAN / WATER_AREA_KM2,
                        DENSITY_BUOYS_MAX = N_BUOYS_MAX / WATER_AREA_KM2) %>%
   dplyr::filter(WATER_AREA_KM2 > 6000) %>% # filter depending on the area to remove coastal cells which sometimes have extreme values
-  dplyr::mutate(DATE = as.Date(paste0(YEAR, "-", MONTH, "-01"))) -> data
+  dplyr::mutate(DATE = as.Date(paste0(YEAR, "-", MONTH, "-01"))) %>%
+  dplyr::filter(YEAR == year) -> data
 
 ## 2.2. Density timeseries ----
 if (build_maps[1]){
@@ -70,22 +71,13 @@ if (build_maps[1]){
     }
     
     
-    maps2020 <- ggpubr::ggarrange(plotlist = map[1:12],
-                                  ncol = 4, nrow = 3,
-                                  align = "hv", labels = "AUTO",
-                                  common.legend = T,
-                                  legend = "right")
+    maps <- ggpubr::ggarrange(plotlist = map[1:12],
+                              ncol = 4, nrow = 3,
+                              align = "hv", labels = "AUTO",
+                              common.legend = T,
+                              legend = "right")
     
-    maps2021 <- ggpubr::ggarrange(plotlist = map[13:length(map)],
-                                  ncol = 4, nrow = 3,
-                                  align = "hv", labels = "AUTO",
-                                  common.legend = T,
-                                  legend = "right")
-    
-    ggsave(Output_names$buoy_density$maps$`2020`[j], maps2020,
-           width = 120*4 + 20,
-           height = 105*3, units = "mm")
-    ggsave(Output_names$buoy_density$maps$`2021`[j], maps2021,
+    ggsave(Output_names$buoy_density$maps[j], maps,
            width = 120*4 + 20,
            height = 105*3, units = "mm")
     

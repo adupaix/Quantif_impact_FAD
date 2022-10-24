@@ -53,6 +53,10 @@ resolution = 5
 #' @sim_output_path: path to the directory where the FAT albaCoRaW outputs are stored
 sim_output_path <- file.path(DATA_PATH, "CRW_output", paste0("global_", commit_name))
 
+#' @year: year of the study @!! until now, only performed on 2020. Sub-routine 5 may need to be adapted depending on the
+#' accuracy of IOTC dataset, received through form 3FA and 3CE
+year = 2020
+
 
 #'# @section Parameters of 1. Regression
 #' --------------------------

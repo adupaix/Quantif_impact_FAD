@@ -80,8 +80,7 @@ for (i in array_type){
 try(dir.create(file.path(OUTPUT_PATH, "2.Buoy_density")), silent = T)
 Output_names$buoy_density$timeseries <- file.path(OUTPUT_PATH, "2.Buoy_density", "timeseries.png")
 for (i in 1:length(fct)){
-  Output_names$buoy_density$maps$`2020`[[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",fct[i],"_2020.png"))
-  Output_names$buoy_density$maps$`2021`[[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",fct[i],"_2021.png"))
+  Output_names$buoy_density$maps[[as.character(year)]][[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",fct[i],"_", year,".png"))
 }
 
 
@@ -91,30 +90,29 @@ for (i in 1:length(fct)){
 Output_names$prediction$cats <- list()
 try(dir.create(file.path(OUTPUT_PATH, "3_4.Prediction", "3.CATs"), recursive = T), silent = T)
 try(dir.create(file.path(OUTPUT_PATH, "3_4.Prediction", "4.Percent")), silent = T)
-for (i in as.character(2020:2021)){
-  Output_names$prediction$cats[[i]] <- list()
-  Output_names$prediction$percent[[i]] <- list()
-  for (j in fct){
-    Output_names$prediction$cats[[i]][[j]] <- list()
-    Output_names$prediction$percent[[i]][[j]] <- list()
-    for (k in array_type){
-      Output_names$prediction$cats[[i]][[j]][[k]] <- list()
-      for (l in cat_type){
-        Output_names$prediction$cats[[i]][[j]][[k]][[l]] <- file.path(OUTPUT_PATH, "3_4.Prediction", "3.CATs",
-                                                                      paste("maps", l,
-                                                                            color_scale_transformation,
-                                                                            "max",max_displayed_cat,
-                                                                            "res",resolution,
-                                                                            i,j,k,".png",
-                                                                            sep = "_"))
-        
-        Output_names$prediction$percent[[i]][[j]][[k]] <- file.path(OUTPUT_PATH, "3_4.Prediction", "4.Percent",
-                                                                    paste0("maps_res",resolution,
-                                                                           "_",i,"_",j,"_",k, ".png"))
-      }
+Output_names$prediction$cats <- list()
+Output_names$prediction$percent <- list()
+for (j in fct){
+  Output_names$prediction$cats[[j]] <- list()
+  Output_names$prediction$percent[[j]] <- list()
+  for (k in array_type){
+    Output_names$prediction$cats[[j]][[k]] <- list()
+    for (l in cat_type){
+      Output_names$prediction$cats[[j]][[k]][[l]] <- file.path(OUTPUT_PATH, "3_4.Prediction", "3.CATs",
+                                                               paste("maps", l,
+                                                                     color_scale_transformation,
+                                                                     "max",max_displayed_cat,
+                                                                     "res",resolution,
+                                                                     year,j,k,".png",
+                                                                     sep = "_"))
+      
+      Output_names$prediction$percent[[j]][[k]] <- file.path(OUTPUT_PATH, "3_4.Prediction", "4.Percent",
+                                                             paste0("maps_res",resolution,
+                                                                    "_",year,"_",j,"_",k, ".png"))
     }
   }
 }
+
 # Values of predicted CATs and percentages of time spent associated, stored in a .csv
 Output_names$prediction$csv <- file.path(OUTPUT_PATH, '3_4.Prediction', paste0("predictions_res",resolution,".csv"))
 

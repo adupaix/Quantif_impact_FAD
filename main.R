@@ -65,8 +65,6 @@ source(file = file.path(ROUT_PATH, "3.Predict_CAT.R"))
 
 ## 3.3 Build prediction maps ----
 if (build_maps[2]){
-  # for each year in the data
-  for (i in 1:length(sort(unique(data$YEAR)))){
     #' for each function chosen as argument (corresponding to the available data:
     #' one or several of min, mean, max)
     for (j in 1:length(fct)){
@@ -77,7 +75,6 @@ if (build_maps[2]){
         }
       }
     }
-  }
 }
 
 # 4. Prediction of Pa (% of time spent associated) ----
@@ -96,14 +93,13 @@ source(file = file.path(ROUT_PATH, "4.Predict_Pa.R"))
 ## 4.3 Build maps of Pa ----
 if (build_maps[3]){
 
-  for (i in 1:length(sort(unique(data_predict$YEAR)))){
     for (j in 1:length(fct)){
       for (k in 1:length(array_type)){
         
         source(file = file.path(ROUT_PATH, "4.Build_maps.R"))
       }
     }
-  }
+  
 }
 
 # 5. Fishing pressure (nb of FOB sets) ----

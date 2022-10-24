@@ -23,7 +23,7 @@ sets3CE <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2022-WPTT24(DP)-DATA05-CE
 
 #' Apply the same formatting to the 2 datasets
 #' 3FA: keep the year and fleets of interest, keep only the lines with sets and rename columns
-sets3FA %>% dplyr::filter(YEAR == 2020,
+sets3FA %>% dplyr::filter(YEAR == year,
                           FLEET_CODE %in% c("EUR", "JPN", "MUS", "SYC"),
                           NUM_SETS_ON_FOB != 0) %>%
   dplyr::select(YEAR, MONTH, FISHING_GROUND_CODE, FLEET_CODE, NUM_SETS_ON_FOB) %>%
@@ -34,7 +34,7 @@ names(sets3FA) <- toupper(names(sets3FA))
 #'      rename the columns
 levels(sets3CE$Fleet) <- gsub(" ", "", levels(sets3CE$Fleet))
 columns <- grep("LS", names(sets3CE))
-sets3CE %>% dplyr::filter(Year == 2020,
+sets3CE %>% dplyr::filter(Year == year,
                           Fleet == "KOR",
                           EffortUnits == "SETS") %>%
   dplyr::select(Fleet:EffortUnits, all_of(columns)) -> sets3CE
@@ -103,7 +103,7 @@ if (build_maps[4]){
       dplyr::filter(month == m) -> sets.m
     # data_predict (with all the CAT and Pa predictions)
     data_predict %>%
-      filter(YEAR == 2020, MONTH == m) -> data.m
+      filter(YEAR == year, MONTH == m) -> data.m
     pts.m <- st_as_sf(data.m, coords = c("degraded_lon","degraded_lat")) # create an st_point data frame object
     cells_in_contour <- list() #will contain the line number in pts.m which correspond to cell that are inside the contour
     
@@ -216,13 +216,13 @@ if (build_maps[4]){
 }
 
 ## Add fishing pressure surface on prediction maps
-if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["2020"]][["mean"]][["random"]][["CAT"]]),
-                    gsub("png","rds", Output_names$prediction$percent[["2020"]][["mean"]][["random"]]),
+if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["mean"]][["random"]][["CAT"]]),
+                    gsub("png","rds", Output_names$prediction$percent[["mean"]][["random"]]),
                     Output_names$fishing_pressure$contour_list)) &
     build_maps[5]){
   
-  maps_cat <- readRDS(gsub("png","rds", Output_names$prediction$cats[["2020"]][["mean"]][["random"]][["CAT"]]))
-  maps_Pa <- readRDS(gsub("png","rds", Output_names$prediction$percent[["2020"]][["mean"]][["random"]]))
+  maps_cat <- readRDS(gsub("png","rds", Output_names$prediction$cats[["mean"]][["random"]][["CAT"]]))
+  maps_Pa <- readRDS(gsub("png","rds", Output_names$prediction$percent[["mean"]][["random"]]))
   contour_list <- readRDS(Output_names$fishing_pressure$contour_list)
   
   for (m in 1:length(maps_cat)){
