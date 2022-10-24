@@ -3,12 +3,13 @@
 #'@update : 2022-08-22
 #'@email : amael.dupaix@ens-lyon.fr
 #'#*******************************************************************************************************************
-#'@description: file containing the functions used in the main script 
+#'@description: file containing the functions used in the main script and the sub-routines
 #'#*******************************************************************************************************************
 #'@revision
 #'#*******************************************************************************************************************
 
-# function to format the Western Indian Ocean maps
+#' function to format the Western Indian Ocean maps
+#'  @p: ggplot2 object containing an unformated map
 mise.en.forme.ggplot <- function(p){
   p <- p + xlab("Longitude") +
     ylab("Latitude") +
@@ -30,6 +31,17 @@ mise.en.forme.ggplot <- function(p){
   
 }
 
+#' Function to generate a summary of the Continuous Absence Times
+#' @CATs: data frame with all the CAT values (output of read.cats())
+#' 
+#' The summary contains, for each interFAD distance:
+#' mean CAT value (days)
+#' mean 1/CAT value
+#' sd of CATs
+#' mean distance between 2 associations (km)
+#' the number of CATs in the data frame (noted n)
+#' the FAD density
+#' the standard error (sd/sqrt(n))
 generate.summary <- function(CATs){
   plyr::ddply(CATs, "distance_min", summarise, mean_CAT = mean(CAT), m = mean(one_over_CAT), sd = sd(one_over_CAT),
               mean_dist = mean(distFAD)) -> cat_summary
@@ -43,11 +55,13 @@ generate.summary <- function(CATs){
   return(cat_summary)
 }
 
-distribution.plot <- function(CATs){
-  ggplot()+
-    geom_violin(data = CATs, aes(x=distance_min, y = one_over_CAT, group = distance_min))
-}
-
+#' Function to fit a relationship to CAT data (using nls function)
+#' and plot the fit
+#' @cat_summary: data frame, output of generate.summary()
+#' @plot_name: path to the file where the plot of the fit will be saved (as .png)
+#' @plot_rds_name: path to the file where the plot of the fit will be saved (as .rds)
+#' @nls_name: path to the file where the nls output will be saved
+#' @cat_type: one of "diff" or "return"
 nls.and.plot <- function(cat_summary,
                          plot_name,
                          plot_rds_name,
@@ -64,27 +78,80 @@ nls.and.plot <- function(cat_summary,
   }
   
   
-  
   p <- ggplot()+
-    # geom_smooth(data = cat_summary, aes(x=rho, y=1/mean_CAT), method = "lm", formula = y ~ 0 + x, se = F)+
-    # geom_errorbar(data = cat_summary, aes(x=rho, ymin = m - sd/sqrt(n), ymax = m + sd/sqrt(n)), alpha = 0.2)+
     geom_point(data = cat_summary, aes(x=rho, y=mean_CAT))+
-    # geom_text(x = 1*max(cat_summary$rho)/5,
-    #           y = 4*max(1/cat_summary$mean_CAT)/5,
-    #           label = lm_eqn(lm_model), parse = TRUE)+
     geom_line(aes(x=x,y=y), col = "red")+
     ylim(0, ifelse(cat_type == "diff", 50, 30))+
     xlab(expression(rho ~ (km^-1)))
   
   ggsave(plot_name, p,
          height = 10, width = 10)
-  # saveRDS(lm_model, lm_name)
+  
   saveRDS(model, nls_name)
   saveRDS(p, plot_rds_name)
   
   return(model)
 }
 
+#' Same as above, for CAT proportions (R)
+#' 2 plots are save: one in 1.CATs, with the proportion of each CAT type
+#'                   one in 1.Regression with the fit of R ~ FAD density
+#' @cat_return_summary: data frame, output of generate.summary() for the CATreturn
+#' @cat_diff_summary: data frame, output of generate.summary() for the CATdiff
+#' @plots_name: path to the files where the plots will be saved (as .png)
+#' @plot_rds_name: path to the file where the plot of the fit will be saved (as .rds)
+#' @nls_name: path to the file where the nls output will be saved
+nls.and.plot.proportion <- function(cat_return_summary,
+                                    cat_diff_summary,
+                                    plots_name,
+                                    plot_rds_name,
+                                    nls_name){
+  
+  merge(cat_return_summary, cat_diff_summary, by = c("distance_min", "rho")) %>%
+    dplyr::select(distance_min, rho, n.x, n.y) %>%
+    dplyr::rename("CATret" = "n.x", "CATdiff" = "n.y") %>%
+    dplyr::mutate(tot = CATdiff + CATret) %>%
+    tidyr::pivot_longer(-c(rho,tot,distance_min), names_to = "type", values_to = "n") %>%
+    dplyr::mutate(p = n/tot) -> toplot
+  
+  p1 <- ggplot(toplot)+
+    geom_area(aes(x = rho, y = p, fill = type),  alpha = 0.7)+
+    scale_fill_brewer("CAT type", palette = "Set1")+
+    scale_y_continuous(n.breaks = 10)+
+    geom_point(data = toplot %>% dplyr::filter(type == "CATret"), aes(x = rho, y = p), color = "grey40")+
+    ylab("Proportion of each CAT type")+
+    xlab("FAD density (km-2)")
+  
+  ggsave(plots_name[1], p1,
+         height = 10, width = 10)
+  
+  ratio <- plyr::ddply(toplot, c("distance_min","rho"), function(x) x[which(x$type == "CATdiff"), "n"] / x[which(x$type == "CATret"), "n"]) %>%
+    dplyr::rename("R" = "V1")
+
+  model <- nls(R ~ a * distance_min**(-2*c) * exp(b / distance_min**2) , data = ratio, start = list(a = 150, b = 200, c = 0.1),
+               control = nls.control(maxiter = 300))
+  
+  a = coef(model)[1]
+  b = coef(model)[2]
+  c = coef(model)[3]
+  
+  p2 <- ggplot()+
+    geom_point(data = ratio, aes(x = rho, y = R))+
+    geom_function(fun = function(x) a * x ** c * exp(b * x), col = "red")+
+    xlab(expression(rho ~ (km^-1)))
+  
+  ggsave(plots_name[2], p2,
+         height = 10, width = 10)
+  saveRDS(model, nls_name)
+  saveRDS(p2, plot_rds_name)
+  
+  return(model)
+}
+
+#' Function to read all the CAT values from the FAT albaCoRaW outputs,
+#' compile them in a data frame and save it as csv
+#' @sim_output_path: path to the directory containing FAT albaCoRaW outputs
+#' @array_type: one of "random", "square", "sqaure_rd" (name of the subdirectory containing the outputs)
 read.cats <- function(sim_output_path,
                       array_type){
   
@@ -104,9 +171,6 @@ read.cats <- function(sim_output_path,
                             sep = " ", header = F)
       names(CATs[[i]]) <- c("id_tuna","nstep_b","nstep_e", "FAD_b", "FAD_e", "CAT", "distFAD", "nn_nb", "is_a_CAT")
       
-      # nn_nb <- apply(CATs[[i]], 1, get.nn.nb.square, dist.i = dists[i])
-      
-      
       CATs[[i]] %>% dplyr::select(id_tuna, CAT, distFAD, nn_nb) %>%
         mutate(seed = seeds[i],
                distance_min = dists[i]) -> CATs[[i]]
@@ -121,6 +185,8 @@ read.cats <- function(sim_output_path,
   return(CATs)
 }
 
+#' Function to generate the path of the outputs of the sub-routine 1.Regression
+#' @path: sub directory of the output directory, containing the outputs of 1.Regression
 generate.output.paths.Regression <- function(path){
   if(!dir.exists(path)){dir.create(path)}
   l <- list()
@@ -152,55 +218,8 @@ generate.output.paths.Regression <- function(path){
   return(l)
 }
 
-nls.and.plot.proportion <- function(cat_return_summary,
-                                    cat_diff_summary,
-                                    plots_name,
-                                    plot_rds_name,
-                                    nls_name){
-  
-  merge(cat_return_summary, cat_diff_summary, by = c("distance_min", "rho")) %>%
-    dplyr::select(distance_min, rho, n.x, n.y) %>%
-    dplyr::rename("CATret" = "n.x", "CATdiff" = "n.y") %>%
-    dplyr::mutate(tot = CATdiff + CATret) %>%
-    tidyr::pivot_longer(-c(rho,tot,distance_min), names_to = "type", values_to = "n") %>%
-    dplyr::mutate(p = n/tot) -> toplot
-  
-  p1 <- ggplot(toplot)+
-    geom_area(aes(x = rho, y = p, fill = type),  alpha = 0.7)+
-    scale_fill_brewer("CAT type", palette = "Set1")+
-    scale_y_continuous(n.breaks = 10)+
-    geom_point(data = toplot %>% dplyr::filter(type == "CATret"), aes(x = rho, y = p), color = "grey40")+
-    ylab("Proportion of each CAT type")+
-    xlab("FAD density (km-2)")
-  
-  ggsave(plots_name[1], p1,
-         height = 10, width = 10)
-  
-  ratio <- plyr::ddply(toplot, c("distance_min","rho"), function(x) x[which(x$type == "CATdiff"), "n"] / x[which(x$type == "CATret"), "n"]) %>%
-    dplyr::rename("R" = "V1")
-  
-  # model <- nls(R ~ a * rho**c * exp(b * rho) , data = ratio, start = list(a = 150, b = 400, c = 0.1),
-  #              control = nls.control(maxiter = 300))
-  model <- nls(R ~ a * distance_min**(-2*c) * exp(b / distance_min**2) , data = ratio, start = list(a = 150, b = 200, c = 0.1),
-               control = nls.control(maxiter = 300))
-  
-  a = coef(model)[1]
-  b = coef(model)[2]
-  c = coef(model)[3]
-  
-  p2 <- ggplot()+
-    geom_point(data = ratio, aes(x = rho, y = R))+
-    geom_function(fun = function(x) a * x ** c * exp(b * x), col = "red")+
-    xlab(expression(rho ~ (km^-1)))
-  
-  ggsave(plots_name[2], p2,
-         height = 10, width = 10)
-  saveRDS(model, nls_name)
-  saveRDS(p2, plot_rds_name)
-  
-  return(model)
-}
-
+#' Generate the distribution of CATs as a function of the mean interFAD distance
+#' @CATs: data frame with the CATs values (output of read.cats())
 plot.CAT.distribution <- function(CATs){
   
   ggplot()+
@@ -251,8 +270,17 @@ general.fit <- function(model_diff, model_return, model_proportion,
   return(simple_model)
 }
 
-#' @out_var: one of "CAT", "CATd", "CATr" or "R"
-cat.formula <- function(rho, model_diff, model_return, model_proportion, out_var){
+#' Function which, from a FAD density value and the models fitted to the different CAT types, return the CAT value
+#' @rho: density values
+#' @model_diff: model fitted to the CATdiff
+#' @model_return: model fitted to the CATreturn
+#' @model_proportion: model fitted to the R values
+#' @out_var: variable to return, one of c("CAT", "CATd", "CATr", "R")
+cat.formula <- function(rho,
+                        model_diff,
+                        model_return,
+                        model_proportion,
+                        out_var = c("CAT", "CATd", "CATr", "R")){
   ad = coef(model_diff)[1]
   bd = coef(model_diff)[2]
   ar = coef(model_return)[1]
@@ -270,6 +298,12 @@ cat.formula <- function(rho, model_diff, model_return, model_proportion, out_var
   
 }
 
+#' Function to change a continuous variable to a discrete one
+#' Returns the input data frame with an additional column
+#' @data: dataframe containing the variable of interest
+#' @steps: vector of the steps at which we wish to discretize the values (e.g. seq(0,100,10))
+#' @col_name: name of the colum to discretize
+#' @new_col_name: name of the discrete column produced
 col.to.discrete <- function(data, steps, col_name, new_col_name){
   
   #Rajoute une colonne a data, qu'on va completer avec les valeurs des categories
