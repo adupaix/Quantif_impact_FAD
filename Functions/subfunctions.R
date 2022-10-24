@@ -8,13 +8,6 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-lm_eqn <- function(lm){
-  eq <- substitute(italic(y) == b %.% italic(x)*"\n"~~italic(r)^2~"="~r2, 
-                   list(b = format(unname(coef(lm)[1]), digits = 2),
-                        r2 = format(summary(lm)$r.squared, digits = 3)))
-  as.character(as.expression(eq));
-}
-
 # function to format the Western Indian Ocean maps
 mise.en.forme.ggplot <- function(p){
   p <- p + xlab("Longitude") +
@@ -53,28 +46,6 @@ generate.summary <- function(CATs){
 distribution.plot <- function(CATs){
   ggplot()+
     geom_violin(data = CATs, aes(x=distance_min, y = one_over_CAT, group = distance_min))
-}
-
-lm.and.plot <- function(cat_summary,
-                        plot_name,
-                        rds_name){
-  lm_model <- lm(1/mean_CAT ~ 0 + rho, cat_summary)
-  
-  p <- ggplot(cat_summary, aes(x=rho, y=1/mean_CAT))+
-    geom_smooth(method = "lm", formula = y ~ 0 + x, se = F)+
-    # geom_errorbar(data = cat_summary, aes(x=rho, ymin = m - sd/sqrt(n), ymax = m + sd/sqrt(n)), alpha = 0.2)+
-    geom_point()+
-    geom_text(x = 1*max(cat_summary$rho)/5,
-              y = 4*max(1/cat_summary$mean_CAT)/5,
-              label = lm_eqn(lm_model), parse = TRUE)+
-    # ylim(0, NA)+
-    ylab("1/<CAT> (days-1)")+xlab("FAD density (km-2)")
-  
-  ggsave(plot_name, p,
-         height = 10, width = 10)
-  saveRDS(lm_model, rds_name)
-  
-  return(lm_model)
 }
 
 nls.and.plot <- function(cat_summary,
