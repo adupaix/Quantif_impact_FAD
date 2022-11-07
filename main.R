@@ -103,7 +103,7 @@ if (BUILD_MAPS[3]){
 }
 
 # 5. Fishing pressure (nb of FOB sets) ----
-cat("\n\n4. Read fishing data and build kernels of FOB set density")
+cat("\n\n5. Read fishing data and build kernels of FOB set density")
 
 source(file.path(ROUT_PATH, "5.FOB_sets.R"))
 
