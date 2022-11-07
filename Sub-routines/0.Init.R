@@ -16,8 +16,8 @@
 #' ***************
 source(file.path(FUNC_PATH, "install_libraries.R"))
 
-srcUsedPackages <- c("plyr", "dplyr", "tidyr", "ggplot2", "ggspatial", 'sf',
-                     "ggpubr")
+srcUsedPackages <- c("plyr", "dplyr", "tidyr", "ggplot2", 'sf',
+                     "maps", "ggpubr", "ks")
 
 installAndLoad_packages(srcUsedPackages, loadPackages = TRUE)
 

@@ -329,11 +329,11 @@ mise.en.forme.ggplot <- function(p){
   p <- p + xlab("Longitude") +
     ylab("Latitude") +
     # echelle distance
-    ggspatial::annotation_scale(location = "bl", width_hint = 0.5) +
+    # ggspatial::annotation_scale(location = "bl", width_hint = 0.5) +
     # fleche nord
-    ggspatial::annotation_north_arrow(location = "tr", which_north = "true", 
-                                      pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
-                                      style = north_arrow_fancy_orienteering) +
+    # ggspatial::annotation_north_arrow(location = "tr", which_north = "true", 
+    #                                   pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
+    #                                   style = north_arrow_fancy_orienteering) +
     # legende a l interieur
     theme(panel.border = element_rect(colour = "black", fill=NA),
           # legend.position = c(1,0),
