@@ -21,7 +21,7 @@ ref_cells <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2021-WGFAD02-DATA00-CWP
 
 data <- merge(n_buoys, ref_cells)
 data <- data.frame(apply(data, 2, function(chr) sub(pattern = ",", replacement = ".", x = chr)))
-data <- data.frame(apply(data, 2, function(FCT) as.numeric(as.character(FCT))))
+data <- data.frame(apply(data, 2, function(fct) as.numeric(as.character(fct))))
 
 data %>% dplyr::mutate(DENSITY_BUOYS_MIN = N_BUOYS_MIN / WATER_AREA_KM2,
                        DENSITY_BUOYS_MEAN = N_BUOYS_MEAN / WATER_AREA_KM2,
@@ -53,14 +53,14 @@ if (BUILD_MAPS[1]){
   months_in_data <- sort(unique(data$DATE))
   # maxs <- c(0.009, 0.004, 0.025)
   
-  for (j in 1:length(VARS_MAP_DENSITY)){
-    lims = c(min(data[,VARS_MAP_DENSITY[j]]), max(data[,VARS_MAP_DENSITY[j]]))
+  for (j in 1:length(vars_map_density)){
+    lims = c(min(data[,vars_map_density[j]]), max(data[,vars_map_density[j]]))
     for (i in 1:length(unique(data$DATE))){
       data %>% dplyr::filter(DATE == months_in_data[i]) %>%
-        # dplyr::filter((!!rlang::sym(VARS_MAP_DENSITY[j])) < maxs[j]) %>%
+        # dplyr::filter((!!rlang::sym(vars_map_density[j])) < maxs[j]) %>%
         ggplot()+
         coord_sf(xlim = c(30, 110), ylim = c(-40, 30), expand = FALSE, crs = st_crs(4326))+
-        geom_tile(aes(x=CENTER_LON, y=CENTER_LAT, fill=(!!rlang::sym(VARS_MAP_DENSITY[j]))))+
+        geom_tile(aes(x=CENTER_LON, y=CENTER_LAT, fill=(!!rlang::sym(vars_map_density[j]))))+
         scale_fill_gradientn(colors=c("black","blue","yellow","red"),
                              limits = lims)+
         # limits = c(0,maxs[j]))+

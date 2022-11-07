@@ -46,7 +46,7 @@ if (GENERAL_SUMMARY){
 
 # 2. Buoy density ----
 #' ***************
-cat("\n\n2. Read buoy density and build maps")
+cat("\n\n2. Read buoy density and build maps\n")
 source(file = file.path(ROUT_PATH, "2.Buoy_density.R"))
 
 #' ********************
@@ -67,7 +67,7 @@ source(file = file.path(ROUT_PATH, "3.Predict_CAT.R"))
 if (BUILD_MAPS[2]){
     #' for each function chosen as argument (corresponding to the available data:
     #' one or several of min, mean, max)
-    for (j in 1:length(FCT)){
+    for (j in 1:length(VARS_DENSITY)){
       #' for each array type
       for (k in 1:length(ARRAY_TYPE)){
         for (l in 1:length(CAT_TYPE)){
@@ -93,7 +93,7 @@ source(file = file.path(ROUT_PATH, "4.Predict_Pa.R"))
 ## 4.3 Build maps of Pa ----
 if (BUILD_MAPS[3]){
 
-    for (j in 1:length(FCT)){
+    for (j in 1:length(VARS_DENSITY)){
       for (k in 1:length(ARRAY_TYPE)){
         
         source(file = file.path(ROUT_PATH, "4.Build_maps.R"))
@@ -103,7 +103,7 @@ if (BUILD_MAPS[3]){
 }
 
 # 5. Fishing pressure (nb of FOB sets) ----
-cat("\n\n5. Read fishing data and build kernels of FOB set density")
+cat("\n\n5. Read fishing data and build kernels of FOB set density\n")
 
 source(file.path(ROUT_PATH, "5.FOB_sets.R"))
 

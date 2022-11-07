@@ -12,7 +12,7 @@
 
 # rename the variable of interest to simplify ggplot construction
 varname <- c(paste("PREDICTED",
-                    toupper(FCT[j]),
+                    toupper(VARS_DENSITY[j]),
                     CAT_TYPE[l],
                     toupper(ARRAY_TYPE[k]),
                     sep = "_"))
@@ -48,9 +48,9 @@ catmaps <- ggpubr::ggarrange(plotlist = cat_maps,
                              align = "hv", labels = "AUTO",
                              common.legend = T,
                              legend = "right")
-ggsave(Output_names$prediction$cats[[FCT[j]]][[ARRAY_TYPE[k]]][[CAT_TYPE[l]]], catmaps,
+ggsave(Output_names$prediction$cats[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]][[CAT_TYPE[l]]], catmaps,
        width = 120*4 + 20,
        height = 105*3, units = "mm")
 
 saveRDS(cat_maps,
-        file = gsub("png","rds", Output_names$prediction$cats[[FCT[j]]][[ARRAY_TYPE[k]]][[CAT_TYPE[[l]]]]))
+        file = gsub("png","rds", Output_names$prediction$cats[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]][[CAT_TYPE[[l]]]]))

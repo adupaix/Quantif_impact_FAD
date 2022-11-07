@@ -25,16 +25,16 @@ data %>% plyr::ddply(.variables = "id_unique",
   dplyr::right_join(data, by = "id_unique") -> data
 
 # predict the mean CATs
-# FCT <- c("min","mean","max")
-for (j in 1:length(FCT)){
+# VARS_DENSITY <- c("min","mean","max")
+for (j in 1:length(VARS_DENSITY)){
   for (array_type.k in ARRAY_TYPE){
     varname <- paste("PREDICTED",
-                      toupper(FCT[j]),
+                      toupper(VARS_DENSITY[j]),
                       CAT_TYPE,
                       toupper(array_type.k),
                       sep = "_")
     
-    fct_name <- paste0(FCT[j],"_degraded_density")
+    fct_name <- paste0(VARS_DENSITY[j],"_degraded_density")
     
     for (k in 1:length(CAT_TYPE)){
       data %>% dplyr::mutate(V1 = cat.formula(rho = data[[fct_name]],

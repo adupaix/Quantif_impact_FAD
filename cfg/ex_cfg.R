@@ -65,18 +65,18 @@ GENERAL_SUMMARY = F
 
 #'# @section Parameters of 2. Buoys density maps
 #' --------------------------
-#' @VARS_MAP_DENSITY: the IOTC dataset contains the monthly mean/min/max number of operationnal buoys per 1° cell
-#'                    VARS_MAP_DENSITY allows to choose which densities will be plotted
+#' @VARS_DENSITY: the IOTC dataset contains the monthly mean/min/max number of operationnal buoys per 1° cell
+#'                    VARS_DENSITY allows to choose which densities will be plotted (in sub-routine 2.)
+#'                    and which densities will be used to calculate the CAT and Pa predictions (in sub-routines 3 and 4.)
 #'                    one of c("mean", "min", "max")
-VARS_MAP_DENSITY <- c("mean")
+VARS_DENSITY <- c("mean")
 
 
 #'# @section Parameters of 3. Predicted CATs maps
 #' --------------------------
-#' @FCT: one of c(mean, min, max) data on which the CAT predictions are done
-#' @ARRAY_TYPE: one  or several of c("square","square_rd","random")
+#' @ARRAY_TYPE: one or several of c("square","square_rd","random")
 #' @CAT_TYPE: one or several of c("CAT","CATd","CATr","R")
-FCT <- c("mean")
+#' 
 # ARRAY_TYPE <- c("square", "square_rd", "random")
 ARRAY_TYPE <- c("random")
 # CAT_TYPE <- c("CAT")

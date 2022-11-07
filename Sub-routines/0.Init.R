@@ -36,7 +36,7 @@ if (any(BUILD_MAPS)){world <- map_data("world")}
 Sys.setlocale("LC_TIME", "en_US.UTF-8") # For Unix
 # Sys.setlocale("LC_TIME", "English") # For Windows
 
-VARS_MAP_DENSITY <- paste0("DENSITY_BUOYS_", toupper(VARS_MAP_DENSITY))
+vars_map_density <- paste0("DENSITY_BUOYS_", toupper(VARS_DENSITY))
 
 # if (compare_with_ABBI){resolution = 10}
 
@@ -79,8 +79,8 @@ for (i in ARRAY_TYPE){
 #' files obtained from the IOTC data on buoy density
 try(dir.create(file.path(OUTPUT_PATH, "2.Buoy_density")), silent = T)
 Output_names$buoy_density$timeseries <- file.path(OUTPUT_PATH, "2.Buoy_density", "timeseries.png")
-for (i in 1:length(FCT)){
-  Output_names$buoy_density$maps[[as.character(YEAR)]][[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",FCT[i],"_", YEAR,".png"))
+for (i in 1:length(VARS_DENSITY)){
+  Output_names$buoy_density$maps[[as.character(YEAR)]][[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",VARS_DENSITY[i],"_", YEAR,".png"))
 }
 
 
@@ -92,7 +92,7 @@ try(dir.create(file.path(OUTPUT_PATH, "3_4.Prediction", "3.CATs"), recursive = T
 try(dir.create(file.path(OUTPUT_PATH, "3_4.Prediction", "4.Percent")), silent = T)
 Output_names$prediction$cats <- list()
 Output_names$prediction$percent <- list()
-for (j in FCT){
+for (j in VARS_DENSITY){
   Output_names$prediction$cats[[j]] <- list()
   Output_names$prediction$percent[[j]] <- list()
   for (k in ARRAY_TYPE){

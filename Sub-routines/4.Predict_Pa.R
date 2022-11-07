@@ -9,14 +9,14 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-for (j in 1:length(FCT)){
+for (j in 1:length(VARS_DENSITY)){
   for (k in 1:length(ARRAY_TYPE)){
     catvarname <- paste0("PREDICTED_",
-                         toupper(FCT[j]),
+                         toupper(VARS_DENSITY[j]),
                          "_CAT_",
                          toupper(ARRAY_TYPE[k]))
     percentvarname <- paste0("PREDICTED_",
-                             toupper(FCT[j]),
+                             toupper(VARS_DENSITY[j]),
                              "_PERCENT_",
                              toupper(ARRAY_TYPE[k]))
     

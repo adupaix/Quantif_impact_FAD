@@ -11,7 +11,7 @@
 
 
 varname <- paste0("PREDICTED_",
-                  toupper(FCT[j]),
+                  toupper(VARS_DENSITY[j]),
                   "_PERCENT_",
                   toupper(ARRAY_TYPE[k]), "_d")
 data_predict[,varname] <- factor(data_predict[,varname]) #drops the unused factors
@@ -52,8 +52,8 @@ percentmaps <- ggpubr::ggarrange(plotlist = percent_maps[1:(length(percent_maps)
                                  align = "hv", labels = "AUTO",
                                  common.legend = T,
                                  legend = "right")
-ggsave(Output_names$prediction$percent[[FCT[j]]][[ARRAY_TYPE[k]]], percentmaps,
+ggsave(Output_names$prediction$percent[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]], percentmaps,
        width = 120*4 + 20,
        height = 105*3, units = "mm")
 saveRDS(percent_maps,
-        file = gsub("png","rds",Output_names$prediction$percent[[FCT[j]]][[ARRAY_TYPE[k]]]))
+        file = gsub("png","rds",Output_names$prediction$percent[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]]))
