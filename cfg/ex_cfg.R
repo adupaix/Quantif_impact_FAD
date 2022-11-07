@@ -65,14 +65,15 @@ GENERAL_SUMMARY = F
 
 #'# @section Parameters of 2. Buoys density maps
 #' --------------------------
-#' @VARS_MAP_DENSITY: choose which densities will be plotted
-#'                   one of c("mean", "min", "max")
+#' @VARS_MAP_DENSITY: the IOTC dataset contains the monthly mean/min/max number of operationnal buoys per 1° cell
+#'                    VARS_MAP_DENSITY allows to choose which densities will be plotted
+#'                    one of c("mean", "min", "max")
 VARS_MAP_DENSITY <- c("mean")
 
 
 #'# @section Parameters of 3. Predicted CATs maps
 #' --------------------------
-#' @FCT: one of c(mean, min, max)
+#' @FCT: one of c(mean, min, max) data on which the CAT predictions are done
 #' @ARRAY_TYPE: one  or several of c("square","square_rd","random")
 #' @CAT_TYPE: one or several of c("CAT","CATd","CATr","R")
 FCT <- c("mean")
@@ -94,23 +95,23 @@ MAX_DISPLAYED_CAT = 30
 #'# @section Parameters of 4. Prediction of Pa ...
 #' --------------------------
 #' @CONSIDERED_CRT: one of c("IO","MozSey")
-#' @CRT: measured CRT values (do not change)
+#' @CRT: measured CRT values (do not change) based on Govinden et al. (2021) ; https://doi.org/10.1111/fog.12536
 CONSIDERED_CRT = "IO"
 CRT = c(IO = 6.64,
         Moz = 7.56,
         Sey = 5.86,
-        IO45 = 6.64 * 0.45) # cf. Govinden et al. (2021) ; https://doi.org/10.1111/fog.12536
+        IO45 = 6.64 * 0.45)
 #' IO45: Baidai et al. (2020) https://doi.org/10.1093/icesjms/fsaa178 demonstrated that, on average,
-#' FADs spend 45% of their time occupied by a tuna aggregation in the IO.
+#' FADs spend 45% of their time occupied by a tuna aggregation in the Indian Ocean.
 #' Hence, in 65% of the cases, a tuna reaches an "empty" FAD. If we consider that tunas associate to meet with conspecifics,
 #' in 65% of the times, it won't associate, so the CRT will be null. Govinden et al. (2021) measured CRT of tuna that did associate and did not
 #' measure the null CRTs, so under this simple hypothesis, the mean CRT is expected to be equal to 45% of the mean measured CRT by
 #' Govinden et al. (2021)
 
 
-#'# @section Parameters of 5. Fishing pressure ...
+#'# @section Parameters of 5. FOB sets ...
 #' --------------------------
-#' @PERCENT_CONTOUR_KERNEL: percentage of the fishing pressure to consider
+#' @PERCENT_CONTOUR_KERNEL: percentage of the FOB sets to consider
 #'                          for example, if PERCENT_CONTOUR_KERNEL = 95, after building the kernel density of the number of FOB sets
 #'                          we extract the contour of the surface which contains 95% of the sets.
 PERCENT_CONTOUR_KERNEL = 95
