@@ -11,80 +11,104 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-# read the FOB set datasets
+#' 1. Analysis on all FOB sets
+#' *************************
+
+#' read the FOB set datasets
 #' Number of FOB sets from the 3FA form (European Union, Japan, Mauritius and Seychelles)
 #' @!! the FOB sets of the EU-France are likely to be overestimated (see IOTC-2022-WGFAD03-03)
 #' However, the set type is not available through the 3CE form for other European fleets
 sets3FA <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2021-WGFAD02-DATA01-FA_Rev1_0.csv"))
 
 #' Number of FOB sets from the 3CE form (Korea)
+#' 
 sets3CE <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2022-WPTT24(DP)-DATA05-CESurface.csv"))
 
-
+year.i = YEAR # create a new variable, so there is no filter problem below (same column name)
 #' Apply the same formatting to the 2 datasets
 #' 3FA: keep the YEAR and fleets of interest, keep only the lines with sets and rename columns
-sets3FA %>% dplyr::filter(YEAR == YEAR,
+sets3FA %>% dplyr::filter(YEAR == year.i,
                           FLEET_CODE %in% c("EUR", "JPN", "MUS", "SYC"),
                           NUM_SETS_ON_FOB != 0) %>%
-  dplyr::select(YEAR, MONTH, FISHING_GROUND_CODE, FLEET_CODE, NUM_SETS_ON_FOB) %>%
+  dplyr::select(YEAR, MONTH, FISHING_GROUND_CODE, FLEET_CODE,
+                NUM_SETS_ON_FOB, OWNERSHIP_TYPE_CODE) %>%
   dplyr::mutate(data_source = "FA") -> sets3FA
 names(sets3FA) <- toupper(names(sets3FA))
+rm(year.i)
 
-#' 3CE: select the YEAR and fleets of interest, keep only the log schools catch and the effort expressed as SETS
-#'      rename the columns
-levels(sets3CE$Fleet) <- gsub(" ", "", levels(sets3CE$Fleet))
-columns <- grep("LS", names(sets3CE))
-sets3CE %>% dplyr::filter(Year == YEAR,
-                          Fleet == "KOR",
-                          EffortUnits == "SETS") %>%
-  dplyr::select(Fleet:EffortUnits, all_of(columns)) -> sets3CE
-columns <- grep("LS", names(sets3CE))
-sets3CE$is_LS <- apply(sets3CE, 1, function(x) !all(is.na(x[columns]))) # if the set was a FOB-set (LS), at least one .LS column won't be a NA
-sets3CE %>% dplyr::filter(is_LS) %>% dplyr::select(Year, MonthStart, Grid, Fleet, Effort) %>% # keep only the FOB sets and the column of interest
-  dplyr::rename("month" = "MonthStart", #rename to have the same formatting as sets3FA
-                "fleet_code" = "Fleet",
-                "num_sets_on_fob" = "Effort",
-                "fishing_ground_code" = "Grid") %>%
-  dplyr::mutate(data_source = "CE") -> sets3CE
-names(sets3CE) <- toupper(names(sets3CE))
+#' the 3FA form is the only one to contain the ownership information
+#' hence we keep a subset of the data for further analysis on the sets on "owned FADs"
+#' (i.e. FADs equipped with a buoy for which the vessel has the information)
+sets3FA %>% dplyr::filter(OWNERSHIP_TYPE_CODE == "OW") -> sets_owned
 
-#' Concatenate the two datasets
-sets <- rbind(sets3FA, sets3CE)
+# remove the ownership column for the rest of the analysis
+sets3FA %>% dplyr::select(-OWNERSHIP_TYPE_CODE) -> sets3FA
 
-# merge it with the ref_cells data.frame (read previously in 2.Buoy_density)
-sets <- merge(sets, ref_cells, by = "FISHING_GROUND_CODE")
-names(sets) <- tolower(names(sets))
-
-# replace the , in the data by .
-sets <- lapply(sets, function(chr) sub(pattern = ",", replacement = ".", x = chr))
-# change all the columns to characters
-sets <- lapply(sets, as.character)
-#remove spaces in the strings
-sets <- lapply(sets, function(x) gsub(" ", "", x))
-# change the columns containing numbers to numeric format
-sets <- data.frame(lapply(sets,
-                          function(x) if(any(grepl("[0-9]", x))){return(as.numeric(x))} else {return(x)}),
-                   stringsAsFactors = F)
-
-sets %>% dplyr::mutate(date = as.Date(paste0(YEAR, "-", month, "-15")),
-                       id_unique = paste0(fishing_ground_code,date)) %>%
-  dplyr::filter(center_lat > -40, center_lat < 30,
-                center_lon > 30, center_lon < 110) -> sets
-
-# dim(sets)[1] # 5760
-# sum(sets$num_sets_on_fob) # 11522
-
-## keep only one line per cell-month, with the sum of the number of sets in the cell
-sets %>%
-  plyr::ddply("id_unique", function(x) sum(x$num_sets_on_fob)) %>%
-  left_join(sets %>%
-              dplyr::filter(!duplicated(sets$id_unique)),
-            by = "id_unique") %>%
-  dplyr::select(-num_sets_on_fob) %>%
-  dplyr::rename("num_sets_on_fob" = "V1") -> sets
-# 
-# dim(sets)[1] # 2672
-# sum(sets$num_sets_on_fob) # 11522
+if (analysis_5 == "all_FOBs"){
+  
+  #' 3CE: select the YEAR and fleets of interest, keep only the log schools catch and the effort expressed as SETS
+  #'      rename the columns
+  levels(sets3CE$Fleet) <- gsub(" ", "", levels(sets3CE$Fleet))
+  columns <- grep("LS", names(sets3CE))
+  sets3CE %>% dplyr::filter(Year == YEAR,
+                            Fleet == "KOR",
+                            EffortUnits == "SETS") %>%
+    dplyr::select(Fleet:EffortUnits, all_of(columns)) -> sets3CE
+  columns <- grep("LS", names(sets3CE))
+  sets3CE$is_LS <- apply(sets3CE, 1, function(x) !all(is.na(x[columns]))) # if the set was a FOB-set (LS), at least one .LS column won't be a NA
+  sets3CE %>% dplyr::filter(is_LS) %>% dplyr::select(Year, MonthStart, Grid, Fleet, Effort) %>% # keep only the FOB sets and the column of interest
+    dplyr::rename("month" = "MonthStart", #rename to have the same formatting as sets3FA
+                  "fleet_code" = "Fleet",
+                  "num_sets_on_fob" = "Effort",
+                  "fishing_ground_code" = "Grid") %>%
+    dplyr::mutate(data_source = "CE") -> sets3CE
+  names(sets3CE) <- toupper(names(sets3CE))
+  
+  #' Concatenate the two datasets
+  sets <- rbind(sets3FA, sets3CE) ; rm(sets3CE, sets3FA)
+  
+  # merge it with the ref_cells data.frame (read previously in 2.Buoy_density)
+  sets <- merge(sets, ref_cells, by = "FISHING_GROUND_CODE")
+  names(sets) <- tolower(names(sets))
+  
+  sets <- format.merged.sets(sets)
+  
+  # dim(sets)[1] # 5760
+  # sum(sets$num_sets_on_fob) # 11522
+  
+  ## keep only one line per cell-month, with the sum of the number of sets in the cell
+  sets %>%
+    plyr::ddply("id_unique", function(x) sum(x$num_sets_on_fob)) %>%
+    left_join(sets %>%
+                dplyr::filter(!duplicated(sets$id_unique)),
+              by = "id_unique") %>%
+    dplyr::mutate(fleet_code = "ALL") %>%
+    dplyr::select(-num_sets_on_fob) %>%
+    dplyr::rename("num_sets_on_fob" = "V1") -> sets
+  # 
+  # dim(sets)[1] # 2672
+  # sum(sets$num_sets_on_fob) # 11522
+  
+  
+} else if (analysis_5 == "owned_FOBs"){
+  #' 2. Analysis on sets on owned FADs only
+  #' ***********************************
+  
+  sets_owned <- merge(sets_owned, ref_cells, by = "FISHING_GROUND_CODE")
+  names(sets_owned) <- tolower(names(sets_owned))
+  
+  sets_owned <- format.merged.sets(sets_owned)
+  
+  ## keep only one line per cell-month, with the sum of the number of sets in the cell
+  sets_owned %>%
+    plyr::ddply("id_unique", function(x) sum(x$num_sets_on_fob)) %>%
+    left_join(sets %>%
+                dplyr::filter(!duplicated(sets$id_unique)),
+              by = "id_unique") %>%
+    dplyr::mutate(fleet_code = "ALL") %>%
+    dplyr::select(-num_sets_on_fob) %>%
+    dplyr::rename("num_sets_on_fob" = "V1") -> sets
+}
 
 #' new column in the data frame, which will contain T if the cell is inside
 #' the polygons containing chosen_cont % of the FOB sets
@@ -173,12 +197,14 @@ if (BUILD_MAPS[4]){
     
   }
   
+  rm(sets.m)
+  
   maps <- ggpubr::ggarrange(plotlist = plist,
                             ncol = 4, nrow = 3,
                             align = "hv", labels = "AUTO",
                             common.legend = T,
                             legend = "right")
-  ggsave(Output_names$fishing_pressure$maps, maps,
+  ggsave(Output_names$fishing_pressure[[analysis_5]]$maps, maps,
          width = 120*4 + 20,
          height = 105*3, units = "mm")
   
@@ -187,7 +213,7 @@ if (BUILD_MAPS[4]){
                                    align = "hv", labels = "AUTO",
                                    common.legend = T,
                                    legend = "right")
-  ggsave(Output_names$fishing_pressure$maps_kernel, maps_kernel,
+  ggsave(Output_names$fishing_pressure[[analysis_5]]$maps_kernel, maps_kernel,
          width = 120*4 + 20,
          height = 105*3, units = "mm")
   
@@ -199,7 +225,7 @@ if (BUILD_MAPS[4]){
     ylab("Number of cells")+
     xlab(expression(Predicted~P[a]))
   
-  ggsave(Output_names$fishing_pressure$hist_Pa, p1, height = 8, width = 6)
+  ggsave(Output_names$fishing_pressure[[analysis_5]]$hist_Pa, p1, height = 8, width = 6)
   
   p2 <- ggplot(data_predict)+
     geom_histogram(aes(x=PREDICTED_MEAN_CAT_RANDOM, fill = is_in_contour),
@@ -210,20 +236,20 @@ if (BUILD_MAPS[4]){
     ylab("Number of cells")+
     xlab("Predicted CAT")
   
-  ggsave(Output_names$fishing_pressure$hist_CAT, p2, height = 8, width = 6)
+  ggsave(Output_names$fishing_pressure[[analysis_5]]$hist_CAT, p2, height = 8, width = 6)
   
-  saveRDS(contour_list, Output_names$fishing_pressure$contour_list)
+  saveRDS(contour_list, Output_names$fishing_pressure[[analysis_5]]$contour_list)
 }
 
 ## Add fishing pressure surface on prediction maps
 if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["mean"]][["random"]][["CAT"]]),
                     gsub("png","rds", Output_names$prediction$percent[["mean"]][["random"]]),
-                    Output_names$fishing_pressure$contour_list)) &
+                    Output_names$fishing_pressure[[analysis_5]]$contour_list)) &
     BUILD_MAPS[5]){
   
   maps_cat <- readRDS(gsub("png","rds", Output_names$prediction$cats[["mean"]][["random"]][["CAT"]]))
   maps_Pa <- readRDS(gsub("png","rds", Output_names$prediction$percent[["mean"]][["random"]]))
-  contour_list <- readRDS(Output_names$fishing_pressure$contour_list)
+  contour_list <- readRDS(Output_names$fishing_pressure[[analysis_5]]$contour_list)
   
   for (m in 1:length(maps_cat)){
     maps_cat[[m]] <- maps_cat[[m]] +
@@ -240,7 +266,7 @@ if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["mean"]][["r
                               align = "hv", labels = "AUTO",
                               common.legend = T,
                               legend = "right")
-  ggsave(Output_names$fishing_pressure$maps_Pa_kernel, Pamaps,
+  ggsave(Output_names$fishing_pressure[[analysis_5]]$maps_Pa_kernel, Pamaps,
          width = 120*4 + 20,
          height = 105*3, units = "mm")
   
@@ -249,9 +275,10 @@ if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["mean"]][["r
                                align = "hv", labels = "AUTO",
                                common.legend = T,
                                legend = "right")
-  ggsave(Output_names$fishing_pressure$maps_CAT_kernel, CATmaps,
+  ggsave(Output_names$fishing_pressure[[analysis_5]]$maps_CAT_kernel, CATmaps,
          width = 120*4 + 20,
          height = 105*3, units = "mm")
   
-  write.csv(data_predict, file = Output_names$fishing_pressure$csv)
+  write.csv(data_predict, file = Output_names$fishing_pressure[[analysis_5]]$csv)
 }
+

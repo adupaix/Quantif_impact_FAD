@@ -30,6 +30,8 @@ data %>% dplyr::mutate(DENSITY_BUOYS_MIN = N_BUOYS_MIN / WATER_AREA_KM2,
   dplyr::mutate(DATE = as.Date(paste0(YEAR, "-", MONTH, "-01"))) %>%
   dplyr::filter(YEAR == get("YEAR", envir = globalenv())) -> data
 
+write.csv(data, file = Output_names$buoy_density$csv)
+
 ## 2.2. Density timeseries ----
 if (BUILD_MAPS[1]){
   data %>% plyr::ddply(.variables = "DATE", function(x) mean(x$DENSITY_BUOYS_MEAN)) %>%

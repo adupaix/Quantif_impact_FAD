@@ -44,6 +44,28 @@ generate.output.paths.Regression <- function(path){
   return(l)
 }
 
+#' Function to generate the paths of the outputs of the sub-routine 5.FOB_sets
+#' @path: sub directory of the output directory, containing the outputs of 5.FOB_sets
+generate.output.paths.FOB_sets <- function(path){
+  l <- list()
+  l$maps <- file.path(path, "number_of_FOB_sets_maps.png")
+  l$maps_kernel <- file.path(path,paste0("number_of_FOB_sets_maps_with_",
+                                         PERCENT_CONTOUR_KERNEL,
+                                         "percent_area.png"))
+  l$hist_Pa <- file.path(path,"Histogram_percentage_of_associated_time.png")
+  l$hist_CAT <- file.path(path,paste0("Histogram_CAT_with_limit_at_",
+                                      MAX_DISPLAYED_CAT,
+                                      ".png"))
+  l$contour_list <- file.path(path,paste0("List_polygons_",PERCENT_CONTOUR_KERNEL,
+                                          "percent_FOB_sets.rds"))
+  l$maps_Pa_kernel <- file.path(path, paste0("Maps_Pa_",PERCENT_CONTOUR_KERNEL,
+                                             "percent_FOB_sets.png"))
+  l$maps_CAT_kernel <- file.path(path,paste0("Maps_CAT_",PERCENT_CONTOUR_KERNEL,
+                                             "percent_FOB_sets.png"))
+  l$csv <- file.path(path, paste0("predictions_res",RESOLUTION,"_percentFOBsets",PERCENT_CONTOUR_KERNEL,".csv"))
+  
+  return(l)
+}
 
 
 #' Functions of 1.Regression
@@ -317,6 +339,30 @@ col.to.discrete <- function(data, steps, col_name, new_col_name){
   names(data)[which(names(data) == "discrete")] <- new_col_name
   
   return(data)
+}
+
+#' Functions of 5.FOB_sets
+#' *************************
+#' Function to format the data frame containing FOB sets data
+#' after it has been merged with ref_cell data frame
+#' @sets: the dataframe to format
+format.merged.sets <- function(sets){
+  # replace the , in the data by .
+  sets <- lapply(sets, function(chr) sub(pattern = ",", replacement = ".", x = chr))
+  # change all the columns to characters
+  sets <- lapply(sets, as.character)
+  #remove spaces in the strings
+  sets <- lapply(sets, function(x) gsub(" ", "", x))
+  # change the columns containing numbers to numeric format
+  sets <- data.frame(lapply(sets,
+                            function(x) if(any(grepl("[0-9]", x))){return(as.numeric(x))} else {return(x)}),
+                     stringsAsFactors = F)
+  
+  sets %>% dplyr::mutate(date = as.Date(paste0(YEAR, "-", month, "-15")),
+                         id_unique = paste0(fishing_ground_code,date)) %>%
+    dplyr::filter(center_lat > -40, center_lat < 30,
+                  center_lon > 30, center_lon < 110) -> sets
+  return(sets)
 }
 
 

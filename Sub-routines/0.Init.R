@@ -79,6 +79,7 @@ for (i in ARRAY_TYPE){
 #' files obtained from the IOTC data on buoy density
 try(dir.create(file.path(OUTPUT_PATH, "2.Buoy_density")), silent = T)
 Output_names$buoy_density$timeseries <- file.path(OUTPUT_PATH, "2.Buoy_density", "timeseries.png")
+Output_names$buoy_density$csv <- file.path(OUTPUT_PATH, "2.Buoy_density", "Formatted_buoy_data.csv")
 for (i in 1:length(VARS_DENSITY)){
   Output_names$buoy_density$maps[[as.character(YEAR)]][[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",VARS_DENSITY[i],"_", YEAR,".png"))
 }
@@ -119,25 +120,8 @@ Output_names$prediction$csv <- file.path(OUTPUT_PATH, '3_4.Prediction', paste0("
 #' Names of 5.Fishing_pressure
 #' --------------------------
 try(dir.create(file.path(OUTPUT_PATH, "5.Fishing_pressure")), silent = T)
-Output_names$fishing_pressure$maps <- file.path(OUTPUT_PATH, "5.Fishing_pressure", "number_of_FOB_sets_maps.png")
-Output_names$fishing_pressure$maps_kernel <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                       paste0("number_of_FOB_sets_maps_with_",
-                                                              PERCENT_CONTOUR_KERNEL,
-                                                              "percent_area.png"))
-Output_names$fishing_pressure$hist_Pa <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                   "Histogram_percentage_of_associated_time.png")
-Output_names$fishing_pressure$hist_CAT <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                       paste0("Histogram_CAT_with_limit_at_",
-                                                              MAX_DISPLAYED_CAT,
-                                                              ".png"))
-Output_names$fishing_pressure$contour_list <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                        paste0("List_polygons_",PERCENT_CONTOUR_KERNEL,
-                                                               "percent_FOB_sets.rds"))
-Output_names$fishing_pressure$maps_Pa_kernel <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                          paste0("Maps_Pa_",PERCENT_CONTOUR_KERNEL,
-                                                                 "percent_FOB_sets.png"))
-Output_names$fishing_pressure$maps_CAT_kernel <- file.path(OUTPUT_PATH, "5.Fishing_pressure",
-                                                          paste0("Maps_CAT_",PERCENT_CONTOUR_KERNEL,
-                                                                 "percent_FOB_sets.png"))
-Output_names$fishing_pressure$csv <- file.path(OUTPUT_PATH, '5.Fishing_pressure',
-                                         paste0("predictions_res",RESOLUTION,"_percentFOBsets",PERCENT_CONTOUR_KERNEL,".csv"))
+analysis_5 <- c("all_FOBs", "owned_FOBs")
+for (i in analysis_5){
+  try(dir.create(file.path(OUTPUT_PATH, "5.Fishing_pressure", i)), silent = T)
+  Output_names$fishing_pressure[[i]] <- generate.output.paths.FOB_sets(path = file.path(OUTPUT_PATH, "5.Fishing_pressure", i))
+}
