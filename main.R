@@ -54,7 +54,7 @@ source(file = file.path(ROUT_PATH, "2.Buoy_density.R"))
 #' ********************
 ## 3.1. Determine proper resolution ----
 #'
-#' retained spatial resolution: 2°
+#' retained spatial resolution: 5°
 #' retained temporal resolution: month
 #' see Determine_resolution.pdf
 #'
