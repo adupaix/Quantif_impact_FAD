@@ -57,6 +57,11 @@ SIM_OUTPUT_PATH <- file.path(DATA_PATH, "CRW_output", paste0("global_", COMMIT_N
 #' accuracy of IOTC dataset, received through form 3FA and 3CE
 YEAR = 2020
 
+#' @NLOG_ONLY: choose to do the whole study for the buoy densities from the IOTC datasets (F) or for the densities
+#'             estimated in the case of a pristine habitat i.e. only the NLOG applying the multiplication factor
+#'             from Dupaix et al. (2021) (T)
+NLOG_ONLY <- F
+
 
 #'# @section Parameters of 1. Regression
 #' --------------------------
@@ -70,7 +75,6 @@ GENERAL_SUMMARY = F
 #'                    and which densities will be used to calculate the CAT and Pa predictions (in sub-routines 3 and 4.)
 #'                    one of c("mean", "min", "max")
 VARS_DENSITY <- c("mean")
-
 
 #'# @section Parameters of 3. Predicted CATs maps
 #' --------------------------
