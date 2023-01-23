@@ -9,10 +9,6 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-data %>% dplyr::mutate(degraded_lat = floor(CENTER_LAT/RESOLUTION)*RESOLUTION + RESOLUTION/2,
-                       degraded_lon = floor(CENTER_LON/RESOLUTION)*RESOLUTION + RESOLUTION/2,
-                       id_unique = paste(YEAR, MONTH, degraded_lat, degraded_lon, sep = "_")) -> data
-
 data %>% plyr::ddply(.variables = "id_unique",
                      function(x) sum(x$DENSITY_BUOYS_MEAN * x$WATER_AREA_KM2) / sum(x$WATER_AREA_KM2) ) %>%
   dplyr::rename("mean_degraded_density" = "V1") %>%

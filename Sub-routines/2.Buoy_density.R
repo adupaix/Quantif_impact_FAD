@@ -30,6 +30,21 @@ data %>% dplyr::mutate(DENSITY_BUOYS_MIN = N_BUOYS_MIN / WATER_AREA_KM2,
   dplyr::mutate(DATE = as.Date(paste0(YEAR, "-", MONTH, "-01"))) %>%
   dplyr::filter(YEAR == get("YEAR", envir = globalenv())) -> data
 
+data %>% dplyr::mutate(degraded_lat = floor(CENTER_LAT/RESOLUTION)*RESOLUTION + RESOLUTION/2,
+                       degraded_lon = floor(CENTER_LON/RESOLUTION)*RESOLUTION + RESOLUTION/2,
+                       id_unique = paste(YEAR, MONTH, degraded_lat, degraded_lon, sep = "_")) -> data
+
+if(NLOG_ONLY){
+  multiplication_factor <- read.csv(file.path(DATA_PATH, paste0("multiplication_factor_NLOGFAD_res",RESOLUTION,"_2014-2020.csv")))
+  names(multiplication_factor) <- c("x","y","mult_factor")
+  dplyr::left_join(data, multiplication_factor, by = c("degraded_lon" = "x", "degraded_lat" = "y")) %>%
+    dplyr::rename("mult_factor" = "ratio") %>%
+    dplyr::filter(!is.na(mult_factor)) %>%
+    dplyr::mutate(DENSITY_BUOYS_MIN = DENSITY_BUOYS_MIN / (mult_factor + 1),
+                  DENSITY_BUOYS_MEAN = DENSITY_BUOYS_MEAN / (mult_factor + 1),
+                  DENSITY_BUOYS_MAX = DENSITY_BUOYS_MAX / (mult_factor + 1)) -> data
+}
+
 write.csv(data, file = Output_names$buoy_density$csv)
 
 ## 2.2. Density timeseries ----
