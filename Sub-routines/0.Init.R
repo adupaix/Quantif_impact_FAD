@@ -26,7 +26,11 @@ installAndLoad_packages(srcUsedPackages, loadPackages = TRUE)
 # ~ ----
 
 # Generate the output path
-OUTPUT_PATH <- file.path(OUTPUT_PATH, COMMIT_NAME)
+if(NLOG_ONLY){
+  OUTPUT_PATH <- file.path(OUTPUT_PATH, paste(COMMIT_NAME, "NLOG_ONLY", sep = '_'))
+} else {
+  OUTPUT_PATH <- file.path(OUTPUT_PATH, COMMIT_NAME)
+}
 if(!dir.exists(OUTPUT_PATH)){dir.create(OUTPUT_PATH, recursive = T)}
 
 # get world data for maps
