@@ -159,7 +159,7 @@ nls.and.plot <- function(cat_summary,
   p <- ggplot()+
     geom_point(data = cat_summary, aes(x=rho, y=mean_CAT))+
     geom_line(aes(x=x,y=y), col = "red")+
-    ylim(0, ifelse(cat_type == "diff", 50, 30))+
+    ylim(0, max(cat_summary$mean_CAT)+1)+
     xlab(expression(rho ~ (km^-1)))
   
   ggsave(plot_name, p,
