@@ -8,19 +8,13 @@
 #'@revision
 #'#*******************************************************************************************************************
 
-#' empty environment
-rm(list = ls())
-invisible(gc())
-
-WD <- "/home/adupaix/Documents/These/Axe_2/Quantif_impact_FAD/"
-
 #' generate basic paths
-DATA_PATH <- file.path(WD,'Data')
+DATA_PATH <- file.path(BASE_DIR,'Data')
 
-OUTPUT_PATH <- file.path(WD,"Outputs")
-FUNC_PATH <- file.path(WD,"Functions")
-ROUT_PATH <- file.path(WD, "Sub-routines")
-RESOURCE_PATH <- file.path(WD,"Resources")
+OUTPUT_PATH <- file.path(BASE_DIR,"Outputs")
+FUNC_PATH <- file.path(BASE_DIR,"Functions")
+ROUT_PATH <- file.path(BASE_DIR, "Sub-routines")
+RESOURCE_PATH <- file.path(BASE_DIR,"Resources")
 
 # Set seed
 set.seed(12345678)
@@ -33,9 +27,6 @@ set.seed(12345678)
 
 #' DATASETS
 #' **********
-#' @SIM_OUTPUT_PATH: path to the directory where the FAT albaCoRaW outputs are stored
-SIM_OUTPUT_PATH <- file.path(DATA_PATH, "CRW_output", paste0("global_", COMMIT_NAME))
-
 #' @COMMIT_NAME: name of the input folder containing the output from FAT albaCoRaW.
 #' This folder must contain sub folders with the name of the type of array used (among "random", "square", "square_rd") 
 #' Possible options:
@@ -43,6 +34,9 @@ SIM_OUTPUT_PATH <- file.path(DATA_PATH, "CRW_output", paste0("global_", COMMIT_N
 # COMMIT_NAME = "R02"
 # COMMIT_NAME = "YFT50_R02"
 COMMIT_NAME = "dd5bd6a"
+
+#' @SIM_OUTPUT_PATH: path to the directory where the FAT albaCoRaW outputs are stored
+SIM_OUTPUT_PATH <- file.path(DATA_PATH, "CRW_output", paste0("global_", COMMIT_NAME))
 
 
 #' @NLOG_ONLY: choose to do the whole study for the buoy densities from the IOTC datasets (F) or for the densities
@@ -163,6 +157,3 @@ CRT = c(IO = 6.64,
 PERCENT_CONTOUR_KERNEL = 95
 
 
-#' Run the main script
-#' -------------------
-source(file.path(WD, "main.R"))
