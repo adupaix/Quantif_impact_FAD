@@ -11,10 +11,10 @@
 
 ## 2.1 Read + prep data ----
 
-n_buoys <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2021-WGFAD02-DATA04.csv"),
+n_buoys <- read.csv(BUOY_DATA_FILE,
                     sep = ";",
                     stringsAsFactors = F)
-ref_cells <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2021-WGFAD02-DATA00-CWP-REFERENCES.csv"),
+ref_cells <- read.csv(IOTC_CELLREF_FILE,
                       sep = ";",
                       stringsAsFactors = F)
 

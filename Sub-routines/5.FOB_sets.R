@@ -18,11 +18,17 @@
 #' Number of FOB sets from the 3FA form (European Union, Japan, Mauritius and Seychelles)
 #' @!! the FOB sets of the EU-France are likely to be overestimated (see IOTC-2022-WGFAD03-03)
 #' However, the set type is not available through the 3CE form for other European fleets
-sets3FA <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2021-WGFAD02-DATA01-FA_Rev1_0.csv"))
+sets3FA <- read.csv(IOTC_SETS_3FA_FILE)
 
 #' Number of FOB sets from the 3CE form (Korea)
 #' 
-sets3CE <- read.csv(file.path(DATA_PATH, "IOTC", "IOTC-2022-WPTT24(DP)-DATA05-CESurface.csv"))
+sets3CE <- read.csv(IOTC_SETS_3CE_FILE)
+
+#' Reference file linking the cell identifier
+#' in the above datasets with the longitude and latitude
+ref_cells <- read.csv(IOTC_CELLREF_FILE,
+                      sep = ";",
+                      stringsAsFactors = F)
 
 year.i = YEAR # create a new variable, so there is no filter problem below (same column name)
 #' Apply the same formatting to the 2 datasets
