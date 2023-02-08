@@ -12,8 +12,17 @@ Scripts used to generate the results and figures of the following paper:
 
 Dupaix A., Dagorn L., Deneubourg J.-L., Capello M. _(in prep)_. Quantifying the impact of habitat modifications on species behavior and mortality: case-study on floating objects and tropical tuna.
 
+Should you have any question, please contact me: amael.dupaix@ens-lyon.fr
+
+## Running the analysis
+
 Scripts run with the __R 3.6.3__ statistical sofware.
 The [conda](https://docs.conda.io/projects/conda/en/latest/) environment to run the model is provided. To create, type : `conda env create -f Quantif_impact_FAD.yml`
+
+To run the analysis:
+- prepare a configuration file (template provided in `cfg/ex_cfg.R`)
+- fill in the `config_name` and `BASE_DIR` variables in `launch.R`
+- run `launch.R`
 
 ## Datasets
 
