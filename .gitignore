@@ -6,6 +6,6 @@ old_scripts
 .Rproj.user
 Outputs
 cfg
+my_launch.R
 
 !cfg/ex_cfg.R
-!my_launch.R
