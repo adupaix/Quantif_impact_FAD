@@ -62,6 +62,14 @@ YEAR = 2020
 #'             from Dupaix et al. (2021) (T)
 NLOG_ONLY <- F
 
+  #' @IF NLOG_ONLY == T
+  #' Then we need the observers data from Ob7
+  #' Two files are needed:
+  #' One containing all the operations on floating objects
+  OBSERVERS_FOBFILE <- file.path(DATA_PATH, "Ob7", "all_operation_on_fobs_observe_fr_ATidd.csv")
+  #' One containing all the vessel activities (operations on FOBs, but also sets, etc.)
+  OBSERVERS_ACTIVITYFILE <- file.path(DATA_PATH, "Ob7", "all_vessel_activities_observe_fr_indian_20191021.csv")
+
 
 #'# @section Parameters of 1. Regression
 #' --------------------------

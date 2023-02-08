@@ -35,14 +35,20 @@ data %>% dplyr::mutate(degraded_lat = floor(CENTER_LAT/RESOLUTION)*RESOLUTION + 
                        id_unique = paste(YEAR, MONTH, degraded_lat, degraded_lon, sep = "_")) -> data
 
 if(NLOG_ONLY){
-  multiplication_factor <- read.csv(file.path(DATA_PATH, paste0("multiplication_factor_NLOGFAD_res",RESOLUTION,"_2014-2020.csv")))
-  names(multiplication_factor) <- c("x","y","mult_factor")
-  dplyr::left_join(data, multiplication_factor, by = c("degraded_lon" = "x", "degraded_lat" = "y")) %>%
-    dplyr::rename("mult_factor" = "ratio") %>%
-    dplyr::filter(!is.na(mult_factor)) %>%
-    dplyr::mutate(DENSITY_BUOYS_MIN = DENSITY_BUOYS_MIN / (mult_factor + 1),
-                  DENSITY_BUOYS_MEAN = DENSITY_BUOYS_MEAN / (mult_factor + 1),
-                  DENSITY_BUOYS_MAX = DENSITY_BUOYS_MAX / (mult_factor + 1)) -> data
+  STARTING_YEAR_FOR_RATIO_CALCULATION = 2014
+  
+  source(file.path(ROUT_PATH, "2.1.Ratio_when_NLOG_ONLY.R"))
+  
+  multiplication_factor <- read.csv2(file.path(DATA_PATH, "2.Buoy_density",
+                                               paste0("LOG_over_FAD_res",RESOLUTION,"_",
+                                                      STARTING_YEAR_FOR_RATIO_CALCULATION,"-",
+                                                      YEAR,".csv")))
+  
+  dplyr::left_join(data, multiplication_factor, by = c("MONTH" = "month", "degraded_lon" = "x", "degraded_lat" = "y")) %>%
+    dplyr::filter(!is.na(Log_over_Fad)) %>%
+    dplyr::mutate(DENSITY_BUOYS_MIN = DENSITY_BUOYS_MIN * Log_over_Fad,
+                  DENSITY_BUOYS_MEAN = DENSITY_BUOYS_MEAN * Log_over_Fad,
+                  DENSITY_BUOYS_MAX = DENSITY_BUOYS_MAX * Log_over_Fad) -> data
 }
 
 write.csv(data, file = Output_names$buoy_density$csv)
