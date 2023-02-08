@@ -17,14 +17,23 @@ The [conda](https://docs.conda.io/projects/conda/en/latest/) environment to run 
 
 ## Datasets
 
-Simulated Continuous Absence Times (read in folder `Data/CRW_output`) were obtained using [FAT albaCoRaW v1.4](https://doi.org/10.5281/zenodo.5834056)
+Simulated Continuous Absence Times (read in folder `SIM_OUTPUT_PATH`) were obtained using [FAT albaCoRaW v1.4](https://doi.org/10.5281/zenodo.5834056)
 
 The following IOTC (Indian Ocean Tuna Commission) datasets were used:
-- [Instrumented buoy data (Jan 2020 - May 2021)](https://iotc.org/WGFAD/02/Data/04-BU)
-- [FAD activity data (2013-2020)](https://www.iotc.org/WGFAD/02/Data/01-FA)
-- [Catch and Effort Data - Surface Fisheries](https://iotc.org/WPTT/24DP/Data/05-CESurface)
+- [Instrumented buoy data (Jan 2020 - May 2021)](https://iotc.org/WGFAD/02/Data/04-BU) (read in `IOTC_BUOY_DATA_FILE`)
+- [FAD activity data (2013-2020)](https://www.iotc.org/WGFAD/02/Data/01-FA) (read in `IOTC_SETS_3FA_FILE`)
+- [Catch and Effort Data - Surface Fisheries](https://iotc.org/WPTT/24DP/Data/05-CESurface) (read in `IOTC_SETS_3CE_FILE`)
+- [Code list for CWP grids](https://iotc.org/WGFAD/02/Data/00-CWP) (codes for 1° cells used, read in `IOTC_CELLREF_FILE`)
+
+If `NLOG_ONLY` is set to `TRUE`, two other datasets are also needed, obtained through a datacall to the [Ob7 - Observatoire des Écosystèmes Pélagiques Tropicaux exploités](https://www.ob7.ird.fr/en/pages/datacall.html). This data is obtained from observers onboard french purse seine vessels:
+- One containing all the operation on floating objects (in `OBSERVERS_FOBFILE`)
+- One containing all the vessel activities (operations on FOBs but also sets, etc. in `OBSERVERS_ACTIVITYFILE`)
 
 ## References
+
+Data from onboard observers (ObServe): Source IRD/Ob7, co-funded by IRD and the EUMAP program for the collection of fisheries data (DCF). https://www.ob7.ird.fr/pages/datacall.html
+
+Data from onboard observers (ObServe) as part of the OCUP program: Source Orthongel, data processing by IRD/Ob7, co-financed by Orthongel and France Filière Pêche (FFP). https://www.ob7.ird.fr/pages/datacall.html
 
 Dupaix, Amaël, Pérez, Géraldine, & Capello, Manuela. (2022). FAT albaCoRaW (v1.4). Zenodo. https://doi.org/10.5281/zenodo.5834056
 
