@@ -279,6 +279,63 @@ general.fit <- function(model_diff, model_return, model_proportion,
 }
 
 
+#' Functions of 2.Buoy_density
+#' *************************
+
+#' Function which, from a FAD density value and the models fitted to the different CAT types, return the CAT value
+#' @data: the data frame from which to build the maps.
+#'        On top of the 3 column names bellow, a column DATE (containing the month) is needed
+#' @var_map_density: the name of the variable in @data which contains the density to be plotted
+#' @lon_var_name: the name of the variable in @data which contains the longitude of the cells
+#' @lat_var_name: the name of the variable in @data which contains the latitude of the cells
+build.density.maps <- function(data, var_map_density, lon_var_name, lat_var_name){
+  
+  map <- list()
+  months_in_data <- sort(unique(data$DATE))
+  
+  data %>%
+    plyr::ddply(.variables = c(lon_var_name,lat_var_name,"DATE"),
+                function(x) mean(x[,var_map_density])) -> data
+  names(data)[which(names(data) == "V1")] <- var_map_density
+  
+  lims = c(min(data[,var_map_density]), max(data[,var_map_density]))
+  
+  legend_name <- paste0("Density (",
+                        ifelse(test = grepl("raw", var_map_density),
+                               yes = "buoys",
+                               no = DENSITY_FROM),
+                        ".km-2)")
+  
+  for (i in 1:length(unique(data$DATE))){
+    data %>%
+      dplyr::filter(DATE == months_in_data[i]) %>%
+      # dplyr::filter((!!rlang::sym(vars_map_density[j])) < maxs[j]) %>%
+      ggplot()+
+      coord_sf(xlim = c(30, 110), ylim = c(-40, 30), expand = FALSE, crs = st_crs(4326))+
+      geom_tile(aes(x=(!!rlang::sym(lon_var_name)),
+                    y=(!!rlang::sym(lat_var_name)),
+                    fill=(!!rlang::sym(var_map_density))))+
+      scale_fill_gradientn(legend_name,
+                           colors=c("black","blue","yellow","red"),
+                           limits = lims)+
+      # limits = c(0,maxs[j]))+
+      geom_polygon(data=world, aes(x=long, y=lat, group=group)) +
+      ggtitle(format(months_in_data[i], format = "%Y-%m")) -> map[[i]]
+    
+    map[[i]] <- mise.en.forme.ggplot(map[[i]])
+  }
+  
+  
+  maps <- ggpubr::ggarrange(plotlist = map[1:length(map)],
+                            ncol = 4, nrow = 3,
+                            align = "hv", labels = "AUTO",
+                            common.legend = T,
+                            legend = "right")
+  
+  return(maps)
+  
+}
+
 #' Functions of 3.Predict_CAT
 #' *************************
 

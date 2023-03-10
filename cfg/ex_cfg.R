@@ -39,12 +39,11 @@ COMMIT_NAME = "dd5bd6a"
 SIM_OUTPUT_PATH <- file.path(DATA_PATH, "CRW_output", paste0("global_", COMMIT_NAME))
 
 
-#' @NLOG_ONLY: choose to do the whole study for the buoy densities from the IOTC datasets (F) or for the densities
-#'             estimated in the case of a pristine habitat i.e. only the NLOG applying the multiplication factor
-#'             from Dupaix et al. (2021) (T)
-NLOG_ONLY <- F
+#' @DENSITY_FROM: choose to do the whole study using the buoy densities from the IOTC datasets ("buoys")
+#'                or from the FOB densities estimated using the multiplication factor from Dupaix et al. (2021) ("FOB")
+#'                or from the LOG densities estimated using the same multiplication factor ("LOG")
+DENSITY_FROM <- "buoys"
 
-  #' @IF NLOG_ONLY == T
   #' Then we need the observers data from Ob7
   #' Two files are needed:
   #' One containing all the operations on floating objects

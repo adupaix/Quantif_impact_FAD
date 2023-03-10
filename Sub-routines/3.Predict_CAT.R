@@ -9,6 +9,8 @@
 #'@revision
 #'#*******************************************************************************************************************
 
+data <- read.csv(file = Output_names$buoy_density$csv)
+
 data %>% plyr::ddply(.variables = "id_unique",
                      function(x) sum(x$DENSITY_BUOYS_MEAN * x$WATER_AREA_KM2) / sum(x$WATER_AREA_KM2) ) %>%
   dplyr::rename("mean_degraded_density" = "V1") %>%

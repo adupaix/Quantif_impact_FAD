@@ -40,10 +40,6 @@ df <- bind_rows(ratio) %>%
   dplyr::filter(!is.na(ratio)) %>%
   dplyr::rename("Log_over_Fad" = "ratio") -> df
 
-ratio_file_name <- paste0("LOG_over_FAD_res", RESOLUTION, "_",
-                          STARTING_YEAR_FOR_RATIO_CALCULATION ,"-",
-                          YEAR, ".csv")
-
 write.csv2(df, file.path(OUTPUT_PATH, "2.Buoy_density", ratio_file_name),
            row.names = F)
 

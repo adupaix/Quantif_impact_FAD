@@ -260,11 +260,11 @@ if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["mean"]][["r
   for (m in 1:length(maps_cat)){
     maps_cat[[m]] <- maps_cat[[m]] +
       geom_sf(data = contour_list[[m]], col = "red", fill = NA) +
-      coord_sf(xlim = c(30, 110), ylim = c(-40, 30), expand = FALSE, crs = st_crs(4326))
+      coord_sf(xlim = c(30, 110), ylim = c(-40, 30), expand = FALSE)
     
     maps_Pa[[m]] <- maps_Pa[[m]] +
       geom_sf(data = contour_list[[m]], col = "red", fill = NA) +
-      coord_sf(xlim = c(30, 110), ylim = c(-40, 30), expand = FALSE, crs = st_crs(4326))
+      coord_sf(xlim = c(30, 110), ylim = c(-40, 30), expand = FALSE)
   }
   
   Pamaps <- ggpubr::ggarrange(plotlist = maps_Pa[1:(length(maps_Pa))],
@@ -285,6 +285,7 @@ if (all(file.exists(gsub("png","rds", Output_names$prediction$cats[["mean"]][["r
          width = 120*4 + 20,
          height = 105*3, units = "mm")
   
-  write.csv(data_predict, file = Output_names$fishing_pressure[[analysis_5]]$csv)
+  write.csv(data_predict, file = Output_names$fishing_pressure[[analysis_5]]$csv,
+            row.names = F)
 }
 

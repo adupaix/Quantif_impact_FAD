@@ -45,6 +45,9 @@ for (l in 1:length(unique(sub_data$DATE))){
   
   
   percent_maps[[l]] <- mise.en.forme.ggplot(percent_maps[[l]])
+  
+  tick <- tick + 1
+  setTxtProgressBar(pb, value = tick)
 }
 
 percentmaps <- ggpubr::ggarrange(plotlist = percent_maps[1:(length(percent_maps))],

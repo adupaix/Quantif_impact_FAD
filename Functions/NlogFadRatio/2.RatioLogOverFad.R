@@ -23,7 +23,7 @@
 #--------------------------------------------------------------------------------------#
 
 ratio.log.fad <- function(Ob7, ttob7, year = c(), log.type = "LOG", month = c(),
-                          gsize = 10, Ob7_preped=10){
+                          gsize = 10, Ob7_preped=T){
   
   ### 1. PREPARATION DES DONNEES ----
   #------------------------------------------------------------------------------  
@@ -136,7 +136,7 @@ subset.month <- function(data, month){
 }
 
 
-## REMPLACE LES VALEURS DES CELLULES AVEC MOINS DE 10 JOURS D OBSERVATION PAR DES NA
+## REMPLACE LES VALEURS DES CELLULES AVEC MOINS DE 6 JOURS D OBSERVATION PAR DES NA
 
 del.low.eff <- function(rast, eff_obs, gsize){
   for (i in 1:length(rast@data@values)) {

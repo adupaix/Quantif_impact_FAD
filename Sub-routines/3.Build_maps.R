@@ -40,6 +40,8 @@ for (m in 1:length(unique(sub_data$DATE))){
   
   cat_maps[[m]] <- mise.en.forme.ggplot(cat_maps[[m]])
   
+  tick <- tick + 1
+  setTxtProgressBar(pb, value = tick)
 }
 
 

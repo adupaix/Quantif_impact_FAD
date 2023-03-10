@@ -20,5 +20,5 @@ BASE_DIR <- "path_to/Quantif_Impact_FAD/"
 setwd(dir = BASE_DIR)
 
 # Sourcing the config file and the main file 
-source(file.path(BASE_DIR, "config", config_name))
+source(file.path(BASE_DIR, "cfg", config_name))
 source(file.path(BASE_DIR, "main.R"))
