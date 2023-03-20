@@ -34,7 +34,7 @@ The following IOTC (Indian Ocean Tuna Commission) datasets were used:
 - [Catch and Effort Data - Surface Fisheries](https://iotc.org/WPTT/24DP/Data/05-CESurface) (read in `IOTC_SETS_3CE_FILE`)
 - [Code list for CWP grids](https://iotc.org/WGFAD/02/Data/00-CWP) (codes for 1° cells used, read in `IOTC_CELLREF_FILE`)
 
-If `NLOG_ONLY` is set to `TRUE`, two other datasets are also needed, obtained through a datacall to the [Ob7 - Observatoire des Écosystèmes Pélagiques Tropicaux exploités](https://www.ob7.ird.fr/en/pages/datacall.html). This data is obtained from observers onboard french purse seine vessels:
+Two other datasets, used to calculate a ratio between DFADs and NLOGs, were obtained through a datacall to the [Ob7 - Observatoire des Écosystèmes Pélagiques Tropicaux exploités](https://www.ob7.ird.fr/en/pages/datacall.html). This data is collected by observers onboard french purse seine vessels:
 - One containing all the operation on floating objects (in `OBSERVERS_FOBFILE`)
 - One containing all the vessel activities (operations on FOBs but also sets, etc. in `OBSERVERS_ACTIVITYFILE`)
 
