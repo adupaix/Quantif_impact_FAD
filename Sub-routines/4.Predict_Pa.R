@@ -20,7 +20,9 @@ for (j in 1:length(VARS_DENSITY)){
                              "_PERCENT_",
                              toupper(ARRAY_TYPE[k]))
     
-    data %>% dplyr::mutate(V1 = 100 * CRT[area] / (CRT[area] + !!rlang::sym(catvarname))) -> data
+    data %>% dplyr::mutate(V1 = 100 * CRT[area] / (CRT[area] + !!rlang::sym(catvarname))) %>%
+      dplyr::mutate(V1 = case_when(is.na(!!rlang::sym(catvarname)) ~ 0,
+                                   !is.na(!!rlang::sym(catvarname)) ~ V1)) -> data
     names(data)[which(names(data)=="V1")] <- percentvarname
     
     data <- col.to.discrete(data = data,

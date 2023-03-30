@@ -16,6 +16,7 @@ varname <- paste0("PREDICTED_",
                   toupper(ARRAY_TYPE[k]), "_d")
 data_predict[,varname] <- factor(data_predict[,varname]) #drops the unused factors
 my_colors <- scales::viridis_pal()(length(levels(data_predict[,varname]))+1) # get the colors (+1 to drop the yellow at the end of the palette)
+my_colors <- my_colors[length(my_colors):1]
 
 data_predict %>%
   dplyr::rename("toplot" = dplyr::all_of(varname)) -> sub_data
@@ -45,6 +46,9 @@ for (l in 1:length(unique(sub_data$DATE))){
   
   
   percent_maps[[l]] <- mise.en.forme.ggplot(percent_maps[[l]])
+  
+  tick <- tick + 1
+  setTxtProgressBar(pb, value = tick)
 }
 
 percentmaps <- ggpubr::ggarrange(plotlist = percent_maps[1:(length(percent_maps))],
