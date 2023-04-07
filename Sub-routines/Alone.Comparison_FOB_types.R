@@ -33,20 +33,26 @@ srcUsedPackages <- c("plyr", "dplyr", "tidyr", "ggplot2", "ggpubr")
 
 installAndLoad_packages(srcUsedPackages, loadPackages = TRUE)
 
+FOLDER_NAME <- "dd5bd6a"
+# FOLDER_NAME <- "YFT50_R02"
+
+FOB_TYPE1 <- "FOB"
+FOB_TYPE2 <- "LOG"
+
 #' Output folder names
 #' ***************
 #'   study with FOB densities
-FOB_DIR_NAME <- "dd5bd6a_FOB"
-#'   study with LOG densities
-LOG_DIR_NAME <- "dd5bd6a_LOG"
+#' FOB_DIR_NAME <- paste0(FOLDER_NAME,FOB_TYPE1)
+#' #'   study with LOG densities
+#' buoys_DIR_NAME <- "dd5bd6a_buoys"
 
 
 # Read predictions from outputs
 var <- c("id_unique", "YEAR", "MONTH", "DATE", "degraded_lon", "degraded_lat",
          "mean_degraded_density","PREDICTED_MEAN_CAT_RANDOM", "PREDICTED_MEAN_PERCENT_RANDOM")
-read.predict.data <- function(type){
+read.predict.data <- function(type, dir_name){
   return(
-    read.csv(file.path(OUTPUT_PATH, get(paste0(toupper(type), "_DIR_NAME")),
+    read.csv(file.path(OUTPUT_PATH, dir_name,
                        "3_4.Prediction", "predictions_res5.csv")) %>%
       dplyr::select(dplyr::all_of(var)) %>%
       dplyr::rename("density" = "mean_degraded_density",
@@ -55,9 +61,16 @@ read.predict.data <- function(type){
       dplyr::mutate(FOB_type = type)
   )
 }
-data <- dplyr::bind_rows(read.predict.data("FOB"),
-                         read.predict.data("LOG")) %>%
-  dplyr::mutate(FOB_type = factor(FOB_type, levels = c("FOB","LOG")))
+data <- dplyr::bind_rows(read.predict.data(FOB_TYPE1, paste0(FOLDER_NAME,"_",FOB_TYPE1)),
+                         read.predict.data(FOB_TYPE2, paste0(FOLDER_NAME,"_",FOB_TYPE2))) %>%
+  dplyr::mutate(FOB_type = factor(FOB_type, levels = c(FOB_TYPE1,FOB_TYPE2)))
+
+# filtering cells which are in common
+id_to_keep1 <- as.character(unique(data[which(data$FOB_type == FOB_TYPE1),"id_unique"]))
+id_to_keep2 <- as.character(unique(data[which(data$FOB_type == FOB_TYPE2),"id_unique"]))
+id_to_keep <- c(id_to_keep1,id_to_keep2)[duplicated(c(id_to_keep1,id_to_keep2))]
+data %>%
+  dplyr::filter(id_unique %in% id_to_keep)-> data
 
 ## Generating comparison histograms
 
@@ -75,7 +88,7 @@ p2 <- ggplot(data = data)+
   geom_histogram(mapping = aes(x = CAT, y =..count.., fill=as.factor(FOB_type)),
                  binwidth = 2, alpha = 0.6,
                  position = "identity")+
-  scale_x_continuous(limits = c(0,30))+
+  scale_x_continuous(limits = c(0,50))+
   scale_fill_brewer("FOB type", palette = "Set1")+
   ylab("Number of cells")+xlab(expression(Predicted~CAT(rho)~(days)))+
   theme(panel.grid = element_blank(),
@@ -101,8 +114,8 @@ fig <- ggpubr::ggarrange(p1,p2,p3,
                          common.legend = T,
                          legend = "top")
 
-dir.create(file.path(OUTPUT_PATH, "Comparison_FOB_LOG"), showWarnings = F)
-ggsave(file.path(OUTPUT_PATH, "Comparison_FOB_LOG", "Figure5.png"), fig,
+dir.create(file.path(OUTPUT_PATH, paste0("Comparison_",FOB_TYPE1,"_",FOB_TYPE2,"_",FOLDER_NAME)), showWarnings = F)
+ggsave(file.path(OUTPUT_PATH, paste0("Comparison_",FOB_TYPE1,"_",FOB_TYPE2,"_",FOLDER_NAME), "Figure5.png"), fig,
        width = 10, height = 6)
 
 ## Summary table
@@ -116,6 +129,8 @@ data %>%
                 sePa = sd(x$Pa, na.rm = T)/nrow(x))) -> summary_comparison
 
 write.csv2(summary_comparison,
-           file = file.path(OUTPUT_PATH, "Comparison_FOB_LOG", "summary_comparison.csv"),
+           file = file.path(OUTPUT_PATH,
+                            paste0("Comparison_",FOB_TYPE1,"_",FOB_TYPE2,"_",FOLDER_NAME),
+                            "summary_comparison.csv"),
            row.names = F)
 
