@@ -33,7 +33,7 @@ for (m in 1:length(unique(sub_data$DATE))){
                          trans = ifelse(CAT_TYPE[l] == "R", "identity",COLOR_SCALE_TRANSFORMATION),
                          colors=c("black","blue","yellow","red"),
                          breaks = c(1, 2, 4, 8, 15, MAX_DISPLAYED_CAT),
-                         limits = c(1, ifelse(CAT_TYPE[l] == "R", NA, MAX_DISPLAYED_CAT)))+
+                         limits = c(0.5, ifelse(CAT_TYPE[l] == "R", NA, MAX_DISPLAYED_CAT)))+
     geom_polygon(data=world, aes(x=long, y=lat, group=group)) +
     ggtitle(format(months_in_data[m], format = "%B")) -> cat_maps[[m]]
   
