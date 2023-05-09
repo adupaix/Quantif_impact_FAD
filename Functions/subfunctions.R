@@ -160,7 +160,7 @@ nls.and.plot <- function(cat_summary,
     geom_point(data = cat_summary, aes(x=rho, y=mean_CAT))+
     geom_line(aes(x=x,y=y), col = "red")+
     ylim(0, max(cat_summary$mean_CAT)+1)+
-    xlab(expression(rho ~ (km^-1)))
+    xlab(expression(rho ~ (km^-2)))
   
   ggsave(plot_name, p,
          height = 10, width = 10)
@@ -216,7 +216,7 @@ nls.and.plot.proportion <- function(cat_return_summary,
   p2 <- ggplot()+
     geom_point(data = ratio, aes(x = rho, y = R))+
     geom_function(fun = function(x) a * x ** c * exp(b * x), col = "red")+
-    xlab(expression(rho ~ (km^-1)))
+    xlab(expression(rho ~ (km^-2)))
   
   ggsave(plots_name[2], p2,
          height = 10, width = 10)
@@ -270,7 +270,7 @@ general.fit <- function(model_diff, model_return, model_proportion,
                   col = "blue")+
     # geom_function(fun = function(x) alpha / x ** betha, col = "blue")+
     ylab("CAT (days)")+
-    xlab(expression(rho ~ (km^-1)))
+    xlab(expression(rho ~ (km^-2)))
   
   ggsave(plot_name, p, width = 8, height = 8)
   saveRDS(p, plot_rds_name)
