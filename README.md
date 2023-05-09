@@ -2,10 +2,8 @@
 
 
 [![License](https://img.shields.io/github/license/adupaix/Quantif_impact_FAD)](https://github.com/adupaix/Quantif_impact_FAD/blob/master/LICENSE)
-<!--
-[![DOI](https://zenodo.org/badge/338344443.svg)](https://zenodo.org/badge/latestdoi/338344443)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7915850.svg)](https://doi.org/10.5281/zenodo.7915850)
 [![Latest Release](https://img.shields.io/github/release/adupaix/Quantif_impact_FAD)](https://github.com/adupaix/Quantif_impact_FAD/releases)
--->
 
 ---
 
