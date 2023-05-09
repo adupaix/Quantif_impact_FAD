@@ -1,7 +1,8 @@
 # Quantifying the impact of habitat modifications on species behavior and mortality: case-study on floating objects and tropical tuna
 
-<!--
+
 [![License](https://img.shields.io/github/license/adupaix/Quantif_impact_FAD)](https://github.com/adupaix/Quantif_impact_FAD/blob/master/LICENSE)
+<!--
 [![DOI](https://zenodo.org/badge/338344443.svg)](https://zenodo.org/badge/latestdoi/338344443)
 [![Latest Release](https://img.shields.io/github/release/adupaix/Quantif_impact_FAD)](https://github.com/adupaix/Quantif_impact_FAD/releases)
 -->
@@ -28,7 +29,7 @@ To run the analysis:
 
 Simulated Continuous Absence Times (read in folder `SIM_OUTPUT_PATH`) were obtained using [FAT albaCoRaW v1.4](https://doi.org/10.5281/zenodo.5834056)
 
-The following IOTC (Indian Ocean Tuna Commission) datasets were used:
+The following IOTC (Indian Ocean Tuna Commission) datasets are used in the scripts:
 - [Instrumented buoy data (Jan 2020 - May 2021)](https://iotc.org/WGFAD/02/Data/04-BU) (read in `IOTC_BUOY_DATA_FILE`)
 - [FAD activity data (2013-2020)](https://www.iotc.org/WGFAD/02/Data/01-FA) (read in `IOTC_SETS_3FA_FILE`)
 - [Catch and Effort Data - Surface Fisheries](https://iotc.org/WPTT/24DP/Data/05-CESurface) (read in `IOTC_SETS_3CE_FILE`)
