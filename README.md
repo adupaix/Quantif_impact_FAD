@@ -9,7 +9,7 @@
 
 Scripts used to generate the results and figures of the following paper:
 
-Dupaix A., Dagorn L., Deneubourg J.-L., Capello M. _(in prep)_. Quantifying the impact of habitat modifications on species behavior and mortality: case-study on floating objects and tropical tuna.
+Dupaix, A., Dagorn, L., Deneubourg, J.-L., & Capello, M. (2024). Quantifying the impact of habitat modifications on species behavior and mortality: The case-study of tropical tuna. Ecological Applications, 34(7), e3018. DOI: [10.1002/eap.3018](https://doi.org/10.1002/eap.3018)
 
 Should you have any question, please contact me: amael.dupaix@ens-lyon.fr
 
