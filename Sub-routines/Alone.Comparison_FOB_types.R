@@ -105,18 +105,47 @@ p3 <- ggplot(data = data)+
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = "white", colour = "black"),
         axis.title.y = element_blank())
- 
 
-fig <- ggpubr::ggarrange(p1,p2,p3,
+mise.en.forme.fig5 <- function(p){
+  return(
+    p + theme(panel.border = element_rect(colour = "black", fill=NA),
+              # legend.position = c(1,0),
+              # legend.justification = c(1,0),
+              legend.background = element_rect(fill="white", linetype = "solid", colour = "black",
+                                               linewidth = 0.5/.pt),
+              legend.title.align = .5,
+              panel.background = element_rect(fill = "white"),
+              panel.grid = element_blank(),
+              plot.title = element_text(hjust = 0.5, size = 16/.pt),
+              axis.text = element_text(size = 14/.pt),
+              axis.title = element_text(size = 15/.pt),
+              legend.text = element_text(size = 14/.pt),
+              legend.title = element_text(size = 16/.pt),
+              line = element_line(linewidth = 0.5/.pt),
+              plot.margin=unit(c(0.1,.1,.1,.1), 'cm'))
+  )
+}
+
+
+
+fig <- ggpubr::ggarrange(mise.en.forme.fig5(p1),
+                         mise.en.forme.fig5(p2),
+                         mise.en.forme.fig5(p3),
                          ncol = 3,
                          labels = "AUTO",
                          label.y = 1.03,
                          common.legend = T,
-                         legend = "top")
+                         legend = "top",
+                         font.label = list(size = 20/.pt,
+                                           color = "black", face = "bold", family = NULL))
 
 dir.create(file.path(OUTPUT_PATH, paste0("Comparison_",FOB_TYPE1,"_",FOB_TYPE2,"_",FOLDER_NAME)), showWarnings = F)
-ggsave(file.path(OUTPUT_PATH, paste0("Comparison_",FOB_TYPE1,"_",FOB_TYPE2,"_",FOLDER_NAME), "Figure5.png"), fig,
+ggsave(file.path(OUTPUT_PATH, paste0("Comparison_",FOB_TYPE1,"_",FOB_TYPE2,"_",FOLDER_NAME), "Figure6.png"), fig,
        width = 10, height = 6)
+tiff(file.path(OUTPUT_PATH, paste0("Comparison_",FOB_TYPE1,"_",FOB_TYPE2,"_",FOLDER_NAME), "Figure6.tiff"),
+     res = 400, width = 18, height = 10.8, units = "cm")
+fig
+dev.off()
 
 ## Summary table
 data %>%

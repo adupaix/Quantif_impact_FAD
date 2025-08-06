@@ -83,7 +83,7 @@ Output_names$buoy_density$timeseries <- file.path(OUTPUT_PATH, "2.Buoy_density",
 Output_names$buoy_density$raw_csv <- file.path(OUTPUT_PATH, "2.Buoy_density", "Formatted_buoy_data_with_raw_densities.csv")
 Output_names$buoy_density$csv <- file.path(OUTPUT_PATH, "2.Buoy_density", "Formatted_buoy_data.csv")
 for (i in 1:length(VARS_DENSITY)){
-  Output_names$buoy_density$maps[[as.character(YEAR)]][[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",VARS_DENSITY[i],"_", YEAR,".png"))
+  Output_names$buoy_density$maps[[i]] <- file.path(OUTPUT_PATH, "2.Buoy_density", paste0("maps_",VARS_DENSITY[i],"_", YEAR,".png"))
 }
 
 

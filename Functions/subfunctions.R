@@ -157,8 +157,8 @@ nls.and.plot <- function(cat_summary,
   
   
   p <- ggplot()+
-    geom_point(data = cat_summary, aes(x=rho, y=mean_CAT))+
-    geom_line(aes(x=x,y=y), col = "red")+
+    geom_point(data = cat_summary, aes(x=rho, y=mean_CAT), size = 0.25/.pt)+
+    geom_line(aes(x=x,y=y), col = "red", linewidth = 0.25/.pt)+
     ylim(0, max(cat_summary$mean_CAT)+1)+
     xlab(expression(rho ~ (km^-2)))
   
@@ -214,8 +214,10 @@ nls.and.plot.proportion <- function(cat_return_summary,
   c = coef(model)[3]
   
   p2 <- ggplot()+
-    geom_point(data = ratio, aes(x = rho, y = R))+
-    geom_function(fun = function(x) a * x ** c * exp(b * x), col = "red")+
+    geom_point(data = ratio, aes(x = rho, y = R),
+               size = 0.25/.pt)+
+    geom_function(fun = function(x) a * x ** c * exp(b * x), col = "red",
+                  linewidth = 0.25/.pt)+
     xlab(expression(rho ~ (km^-2)))
   
   ggsave(plots_name[2], p2,
@@ -261,13 +263,15 @@ general.fit <- function(model_diff, model_return, model_proportion,
   
   
   p <- ggplot()+
-    geom_point(data = cat_summary, aes(x = rho, y = mean_CAT))+
+    geom_point(data = cat_summary, aes(x = rho, y = mean_CAT),
+               size = 0.25/.pt)+
     geom_function(fun = cat.formula,
                   args = list(model_diff=model_diff,
                               model_return=model_return,
                               model_proportion=model_proportion,
                               out_var="CAT"),
-                  col = "blue")+
+                  col = "blue",
+                  linewidth = 0.25/.pt)+
     # geom_function(fun = function(x) alpha / x ** betha, col = "blue")+
     ylab("CAT (days)")+
     xlab(expression(rho ~ (km^-2)))
@@ -328,9 +332,11 @@ build.density.maps <- function(data, var_map_density, lon_var_name, lat_var_name
   
   maps <- ggpubr::ggarrange(plotlist = map[1:length(map)],
                             ncol = 4, nrow = 3,
-                            align = "hv", labels = "AUTO",
+                            align = "v", labels = "AUTO",
                             common.legend = T,
-                            legend = "right")
+                            legend = "right",
+                            font.label = list(size = 13/.pt, color = "black",
+                                              face = "bold", family = NULL))
   
   return(maps)
   
@@ -441,10 +447,17 @@ mise.en.forme.ggplot <- function(p){
     theme(panel.border = element_rect(colour = "black", fill=NA),
           # legend.position = c(1,0),
           # legend.justification = c(1,0),
-          legend.background = element_rect(fill="white", linetype = "solid", colour = "black"),
+          legend.background = element_rect(fill="white", linetype = "solid",
+                                           colour = "black", linewidth = 0.25/.pt),
           legend.title.align = .5,
           panel.background = element_rect(fill = "grey40"),
           panel.grid = element_blank(),
-          plot.title = element_text(hjust = 0.5))
+          plot.title = element_text(hjust = 0.5, size = 13/.pt),
+          axis.text = element_text(size = 11/.pt),
+          axis.title = element_text(size = 12/.pt),
+          legend.text = element_text(size = 11/.pt),
+          legend.title = element_text(size = 13/.pt),
+          line = element_line(linewidth = 0.25/.pt),
+          plot.margin=unit(c(0.1,.1,.1,.1), 'cm'))
   
 }

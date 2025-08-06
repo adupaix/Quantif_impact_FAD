@@ -53,11 +53,18 @@ for (l in 1:length(unique(sub_data$DATE))){
 
 percentmaps <- ggpubr::ggarrange(plotlist = percent_maps[1:(length(percent_maps))],
                                  ncol = 4, nrow = 3,
-                                 align = "hv", labels = "AUTO",
+                                 align = "v", labels = "AUTO",
                                  common.legend = T,
-                                 legend = "right")
+                                 legend = "right",
+                                 font.label = list(size = 13/.pt,
+                                                   color = "black", face = "bold", family = NULL))
 ggsave(Output_names$prediction$percent[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]], percentmaps,
        width = 120*4 + 20,
        height = 105*3, units = "mm")
+ggsave(gsub("png","eps",Output_names$prediction$percent[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]]),
+       percentmaps,
+       device = "eps",
+       width = 18,
+       height = 11.34, units = "cm")
 saveRDS(percent_maps,
         file = gsub("png","rds",Output_names$prediction$percent[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]]))

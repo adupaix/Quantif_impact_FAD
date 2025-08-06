@@ -47,12 +47,16 @@ for (m in 1:length(unique(sub_data$DATE))){
 
 catmaps <- ggpubr::ggarrange(plotlist = cat_maps,
                              ncol = 4, nrow = 3,
-                             align = "hv", labels = "AUTO",
+                             align = "v", labels = "AUTO",
                              common.legend = T,
-                             legend = "right")
-ggsave(Output_names$prediction$cats[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]][[CAT_TYPE[l]]], catmaps,
-       width = 120*4 + 20,
-       height = 105*3, units = "mm")
+                             legend = "right",
+                             font.label = list(size = 13/.pt,
+                                               color = "black", face = "bold", family = NULL))
+ggsave(sub("png","eps",Output_names$prediction$cats[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]][[CAT_TYPE[l]]]),
+       catmaps,
+       device = "eps",
+       width = 18,
+       height = 11.34, units = "cm")
 
 saveRDS(cat_maps,
         file = gsub("png","rds", Output_names$prediction$cats[[VARS_DENSITY[j]]][[ARRAY_TYPE[k]]][[CAT_TYPE[[l]]]]))

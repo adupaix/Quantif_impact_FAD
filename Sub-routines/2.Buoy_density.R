@@ -110,9 +110,11 @@ if (BUILD_MAPS[1]){
                                lon_var_name = "CENTER_LON",
                                lat_var_name = "CENTER_LAT")
     
-    ggsave(sub("maps","Raw_maps",Output_names$buoy_density$maps[j]), maps,
-           width = 120*4 + 20,
-           height = 105*3, units = "mm")
+    ggsave(sub("png","eps",sub("maps","Raw_maps",Output_names$buoy_density$maps[[j]])),
+           maps,
+           device = "eps",
+           width = 18,
+           height = 11.34, units = "cm")
     
     # Maps of densities obtained with multiplication factor
     maps <- build.density.maps(data %>%
@@ -121,7 +123,7 @@ if (BUILD_MAPS[1]){
                                lon_var_name = "degraded_lon",
                                lat_var_name = "degraded_lat")
     
-    ggsave(Output_names$buoy_density$maps[j], maps,
+    ggsave(Output_names$buoy_density$maps[[j]], maps,
            width = 120*4 + 20,
            height = 105*3, units = "mm")
     
